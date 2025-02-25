@@ -1,0 +1,9 @@
+version: "2"
+services:
+  nginx-react:
+    container_name: ngixreactapp
+    build:
+      context: .
+      dockerfile: Dockerfile.staging
+    ports:
+      - ${VITE_PORT}:80

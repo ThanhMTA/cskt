@@ -1,0 +1,11 @@
+export const FORCE_PAGE_LABEL = {
+  REASON: "lý do tăng giảm trang thiết bị",
+  UNIT: "đơn vị tính",
+  CONDITION: "tình trạng trang thiết bị",
+  MAJOR: "chuyên ngành",
+  SPECIES: "chủng loại trang bị kỹ thuật",
+  ORG_TYPE: "loại đơn vị",
+  ORGANIZATIONS: "đơn vị",
+  TBVTCategories: "trang bị kỹ thuật nhóm I và II",
+  PERSONAL_IDENTIFY: 'quân nhân'
+}

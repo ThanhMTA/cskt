@@ -1,0 +1,45 @@
+@import "@app/assets/scss/customs.scss";
+@import "@app/assets/scss/variables.scss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@import "@app/assets/scss/ant-design.scss";
+
+* {
+  font-family: $primaryFont !important;
+  font-weight: 500;
+  font-variant: normal;
+}
+.form-container .ant-form-item {
+  margin-bottom: 10px; /* Adjust this value to reduce the vertical spacing */
+}
+body {
+  margin: 0 !important;
+}
+
+/* width */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  @apply rounded-full bg-gray-50;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  @apply rounded-full bg-gray-400;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-primary cursor-pointer;
+}
+
+.w-full {
+  .ant-select {
+    width: 100% !important;
+  }
+}

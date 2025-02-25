@@ -1,0 +1,67 @@
+.org-leave-manage-table {
+  .ant-table-row-expand-icon {
+    @apply rounded scale-[80%] #{!important};
+  }
+  .ant-table-row-expand-icon::before {
+    top: auto !important;
+  }
+  .ant-table-row-expand-icon::after {
+    inset-inline-start: auto !important;
+  }
+  td.ant-table-cell .ant-table-row-expand-icon {
+    margin-top: 0 !important;
+  }
+  .ant-table-selection-column .ant-checkbox-wrapper .ant-checkbox-inner {
+    @apply rounded scale-[80%] #{!important};
+  }
+  th.ant-table-cell[scope="col"]:not(.ant-table-selection-column) {
+    text-align: start !important;
+    border-right: 1px solid #0000000f;
+  }
+  .ant-table-column-sorters {
+    flex-direction: row-reverse !important;
+  }
+  .ant-table-column-sorters .ant-table-column-title {
+    font-weight: 600 !important;
+  }
+  .ant-table-column-sorters .ant-table-column-sorter.ant-table-column-sorter-full {
+    margin-inline: 0 4px !important;
+  }
+}
+
+.filter-container {
+  .ant-collapse .ant-collapse-content>.ant-collapse-content-box {
+    padding: 0;
+  }
+  .ant-collapse>.ant-collapse-item>.ant-collapse-header {
+    padding: 16px 8px 8px;
+  }
+}
+
+.custom-ant-table .ant-table {
+  border: 1px solid #0000000f;
+  border-radius: 0;
+}
+
+.custom-ant-table .ant-table-thead>tr>th {
+  padding: 6px;
+  &:nth-child(n + 3) {
+    text-align: center;
+  }
+  &::before {
+    width: 0 !important;
+  }
+  &:first-child {
+    border-right: 1px solid #0000000f;
+  }
+}
+
+.custom-header {
+  text-align: center !important;
+  /* Force center alignment */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  /* Ensure it spans the header height */
+}

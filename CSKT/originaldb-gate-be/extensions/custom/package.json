@@ -1,0 +1,63 @@
+{
+  "name": "custom",
+  "description": "Xử lý custom middlewares",
+  "icon": "extension",
+  "version": "1.0.0",
+  "keywords": [
+    "directus",
+    "directus-extension",
+    "directus-extension-bundle"
+  ],
+  "files": [
+    "dist"
+  ],
+  "directus:extension": {
+    "type": "bundle",
+    "path": {
+      "app": "dist/app.js",
+      "api": "dist/api.js"
+    },
+    "entries": [
+      {
+        "type": "hook",
+        "name": "hooks",
+        "source": "src/hooks/index.ts"
+      },
+      {
+        "type": "endpoint",
+        "name": "api",
+        "source": "src/api/index.ts"
+      }
+    ],
+    "host": "^10.10.0"
+  },
+  "scripts": {
+    "postinstall": "cp -r node_modules/swagger-ui-dist/* dist/",
+    "build": "directus-extension build",
+    "dev": "directus-extension build -w --no-minify",
+    "link": "directus-extension link",
+    "add": "directus-extension add"
+  },
+  "devDependencies": {
+    "@directus/errors": "^0.2.4",
+    "@directus/extensions-sdk": "^11.0.1",
+    "@types/js-yaml": "^4.0.9",
+    "@types/jsonwebtoken": "^9.0.6",
+    "@types/node": "^20.11.26",
+    "@types/swagger-ui-express": "^4.1.6",
+    "directus": "^10.10.3",
+    "typescript": "^5.4.2"
+  },
+  "dependencies": {
+    "@directus/types": "^11.1.0",
+    "dayjs": "^1.11.11",
+    "easy-template-x": "^3.2.1",
+    "exceljs": "^4.4.0",
+    "find-workspaces": "^0.3.1",
+    "js-yaml": "^4.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "nanoid": "^5.0.7",
+    "swagger-ui-express": "^5.0.0",
+    "write-excel-file": "^1.4.30"
+  }
+}

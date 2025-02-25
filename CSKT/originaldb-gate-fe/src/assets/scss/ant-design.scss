@@ -1,0 +1,199 @@
+.ant-table-wrapper .ant-table {
+  scrollbar-color: unset;
+}
+
+.ant-table {
+  border-radius: 10px !important;
+
+  .ant-table-title {
+    @apply bg-grayColor;
+    padding: 0 !important;
+  }
+
+  th.ant-table-cell {
+    .ant-table-filter-column {
+      .ant-table-filter-trigger {
+        justify-content: center;
+        margin-right: 2px;
+        width: 30px !important;
+      }
+    }
+  }
+  .ant-table-container {
+    .ant-table-body {
+      // height: 310px;
+      table {
+        tbody.ant-table-tbody {
+          tr:last-child {
+            td {
+              border-bottom: none !important;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+.table-xlsc .ant-table-thead .ant-table-cell {
+  background-color: #f5f5f6 !important;
+}
+.ant-table-tbody .ant-table-cell {
+  padding-top: 9px !important;
+  padding-bottom: 8px !important;
+  height: 32px !important;
+}
+
+.ant-spin-nested-loading {
+  border-radius: 10px !important;
+  overflow: hidden;
+}
+
+.ant-form {
+  &-item {
+    &-row {
+      .ant-form-item-label {
+        @apply font-bold mb-0 pb-0;
+        label {
+          @apply font-extrabold;
+        }
+      }
+    }
+  }
+}
+
+.ant-pagination {
+  &-item-active {
+    // border-color: transparent !important;
+  }
+}
+
+// MODAL
+.ant-modal {
+  &-content {
+    .ant-modal-close {
+      @apply w-[40px] h-[40px] rounded-full bg-grayColor flex justify-center items-center -top-[10px] -right-[20px] hover:bg-gray-200;
+    }
+  }
+}
+
+// IMAGE
+.ant-image {
+  @apply rounded-primary overflow-hidden;
+}
+
+//MESSAGES
+.ant-message
+  .ant-message-notice-wrapper
+  .ant-message-notice-success
+  .ant-message-notice-content {
+  @apply bg-successLight border-[1px] border-solid border-success #{!important};
+}
+
+.custom-tabs-v1 .ant-tabs-tab {
+  padding-top: 15px !important;
+  padding-bottom: 15px !important;
+  margin-left: 20px !important;
+  margin-right: 20px !important;
+  height: 45px !important;
+  gap: 5px !important;
+}
+.custom-tabs .ant-tabs-tab {
+  margin-left: 5px !important;
+  margin-top: 5px !important;
+  margin-bottom: 6px !important;
+  gap: 5px !important;
+  background-color: #f5f5f6 !important;
+}
+.custom-tabs .ant-tabs-tab.ant-tabs-tab-active {
+  border-radius: 4px !important;
+  background-color: #ffffff !important;
+  height: fit-content !important;
+  box-shadow: 0px 1px 4px 0px #00000033 !important;
+}
+
+.ant-menu-item {
+  color: #000810 !important;
+  font-weight: 400;
+  padding-left: 10px !important;
+}
+
+.ant-menu-item-selected {
+  background-color: #ecf4fe !important;
+  color: #0074d6 !important;
+  font-weight: 400;
+  padding-left: 10px !important;
+}
+
+.ant-menu > .ant-menu-item:hover,
+.ant-menu > .ant-menu-submenu:hover,
+.ant-menu > .ant-menu-item-active,
+.ant-menu > .ant-menu-submenu-active,
+.ant-menu > .ant-menu-item-open,
+.ant-menu > .ant-menu-submenu-open,
+.ant-menu > .ant-menu-item-selected,
+.ant-menu > .ant-menu-submenu-selected {
+  background-color: #ecf4fe !important;
+  font-weight: 400;
+  padding-left: 10px !important;
+}
+
+.ant-table-pagination.ant-pagination {
+  margin: 5px 0px 0px 0px !important;
+  align-items: center !important;
+}
+.ant-pagination-item-link {
+  height: 28px;
+  width: 28px;
+}
+.ant-pagination-item {
+  display: flex !important;
+  height: 24px !important;
+  min-width: 24px !important;
+  border-radius: 2px !important;
+  justify-content: center !important;
+  align-items: center !important;
+}
+.ant-pagination-options-size-changer .ant-select-selector {
+  display: flex !important;
+  border-radius: 2px !important;
+  padding-left: 5px !important;
+  padding-right: 5px !important;
+  height: 28px !important;
+  width: 96px !important;
+  justify-content: center !important;
+  align-items: center !important;
+  margin-top: 5px !important;
+}
+
+.ant-form-item-label {
+  display: flex !important;
+  justify-content: space-between !important;
+}
+
+.ant-checkbox-inner {
+  border-radius: 2px !important;
+}
+
+.ant-tree-checkbox-inner {
+  border-radius: 2px !important;
+}
+.ant-tree-switcher {
+  width: 15px !important;
+  height: 0px !important;
+  margin-top: -5px !important;
+}
+.ant-tree-node-content-wrapper {
+  padding: 0px !important;
+}
+
+.ant-select-item-option:hover,
+.ant-select-tree-treenode-switcher-open:hover {
+  background-color: #a9a9a9 !important;
+}
+
+.ant-select-tree-treenode-active {
+  background-color: #a9a9a9 !important;
+}
+.ant-select-item-option-active {
+  background-color: #a9a9a9 !important;
+}

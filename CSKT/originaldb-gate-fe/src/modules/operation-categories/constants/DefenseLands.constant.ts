@@ -1,0 +1,18 @@
+export const DEFENSE_LANDS_FIELDS_NAME = {
+  NAME: "Tên điểm đất",
+  SYMBOL: "Ký hiệu",
+  MANAGE_ORG_ID: "Đơn vị quản lý",
+  WARD_ID: "Địa bàn",
+  ADDRESS: "Địa chỉ",
+  AREA: "Diện tích đất (m2)",
+  LONGITUDE: "Kinh độ (Độ N)",
+  LATITUDE: "Vĩ độ (Độ E)",
+  ALTITUDE: "Độ cao so với mực nước biển",
+  PHONE_NUMBER: "Số điện thoại liên hệ",
+  ORDER_NUMBER: "Số điện thoại",
+  ID_EX: "Mã định danh mở rộng (CSDL BQP)",
+  CODE_EX: "Mã mở rộng (CSDL BQP)",
+  IS_ENABLE: "Trạng thái",
+  URL_FILE_PATH: "Hồ sơ kỹ thuật trạm",
+  SHORT_NAME: "Tên tắt điểm đất",
+};
