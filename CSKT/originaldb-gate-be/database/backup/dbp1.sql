@@ -30,7 +30,7 @@ CREATE TABLE public.Bien_Ban_Ban_Giao (
     Nguoi_giao_nhan public.Thong_Tin_Nguoi, -- gom nhóm họ tên , cấp bậc, chức vụ thành 1 nhóm 
     Ghi_chu varchar(255), 
     id_dv_g int  NOT Null, 
-    id_dv_g int  not null, 
+    id_dv_n int  not null, 
     id_CB int not null, -- cán bộ của p1 
 
 
@@ -524,3 +524,85 @@ ALTER SEQUENCE public.Vi_Tri_id_seq OWNER TO postgres;
 
 ALTER SEQUENCE public.Vi_Tri_id_seq  OWNED BY public.Vi_Tri
 
+
+
+-- gán khóa ngoại 
+-- Biên bản bàn giao 
+ALTER TABLE ONLY public.Bien_Ban_Ban_Giao
+    ADD CONSTRAINT Bien_Ban_Ban_Giao_id_dv_n_foreign FOREIGN KEY (id_dv_n) REFERENCES public.Don_Vi(id) ON DELETE SET NULL;
+
+ALTER TABLE ONLY public.Bien_Ban_Ban_Giao
+    ADD CONSTRAINT Bien_Ban_Ban_Giao_id_dv_g_foreign FOREIGN KEY (id_dv_g) REFERENCES public.Don_Vi(id) ON DELETE SET NULL;
+ALTER TABLE ONLY public.Bien_Ban_Ban_Giao
+    ADD CONSTRAINT Bien_Ban_Ban_Giao_id_dv_g_foreign FOREIGN KEY (id_dv_g) REFERENCES public.Don_Vi(id) ON DELETE SET NULL;
+ALTER TABLE ONLY public.Bien_Ban_Ban_Giao
+    ADD CONSTRAINT Bien_Ban_Ban_Giao_id_CB_foreign FOREIGN KEY (id_CB) REFERENCES public.Can_Bo(id) ON DELETE SET NULL;
+
+-- Cán bộ 
+ALTER TABLE ONLY public.Can_Bo
+    ADD CONSTRAINT Can_Bo_id_TK_foreign FOREIGN KEY (id_TK) REFERENCES public.Tai_Khoan(id) ON DELETE SET NULL;
+
+-- chi tiết bàn giao 
+ALTER TABLE ONLY public.Chi_Tiet_Ban_Giao
+    ADD CONSTRAINT Chi_Tiet_Ban_Giao_id_TK_foreign FOREIGN KEY (id_BBBG) REFERENCES public.Bien_Ban_Ban_Giao(id) ON DELETE SET NULL;
+ALTER TABLE ONLY public.Chi_Tiet_Ban_Giao
+    ADD CONSTRAINT Chi_Tiet_Ban_Giao_id_TK_foreign FOREIGN KEY (id_TB) REFERENCES public.Thiet_Bi(id) ON DELETE SET NULL;
+
+-- Công việc 
+ALTER TABLE ONLY public.Cong_Viec
+    ADD CONSTRAINT Cong_Viec_id_NCV_foreign FOREIGN KEY (id_NCV) REFERENCES public.Nhom_Cong_Viec(id) ON DELETE SET NULL;
+
+-- Đầu việc 
+ALTER TABLE ONLY public.Dau_Viec
+    ADD CONSTRAINT Dau_Viec_id_DVC_foreign FOREIGN KEY (id_DV_C) REFERENCES public.Dau_Viec(id) ON DELETE SET NULL;
+ALTER TABLE ONLY public.Dau_Viec
+    ADD CONSTRAINT Dau_Viec_id_HS_foreign FOREIGN KEY (id_HS) REFERENCES public.Ho_So(id) ON DELETE SET NULL;
+ALTER TABLE ONLY public.Dau_Viec
+    ADD CONSTRAINT Dau_Viec_id_CV_foreign FOREIGN KEY (id_CV) REFERENCES public.Cong_Viec(id) ON DELETE SET NULL;
+ALTER TABLE ONLY public.Dau_Viec
+    ADD CONSTRAINT Dau_Viec_id_CB_foreign FOREIGN KEY (id_CB) REFERENCES public.Can_Bo(id) ON DELETE SET NULL;
+-- Đơn vị 
+ALTER TABLE ONLY public.Don_Vi
+    ADD CONSTRAINT Don_Vi_id_DVC_foreign FOREIGN KEY (id_DV_C) REFERENCES public.Don_Vi(id) ON DELETE SET NULL;
+
+
+-- Hồ sơ 
+ALTER TABLE ONLY public.Ho_So
+    ADD CONSTRAINT Ho_So_id_NHS_foreign FOREIGN KEY (id_NHS) REFERENCES public.Nhom_Ho_So(id) ON DELETE SET NULL;
+ALTER TABLE ONLY public.Ho_So
+    ADD CONSTRAINT Ho_So_id_TB_foreign FOREIGN KEY (id_TB) REFERENCES public.Thiet_Bi(id) ON DELETE SET NULL;
+
+-- Loại nhóm công việc
+ALTER TABLE ONLY public.Nhom_Cong_Viec
+    ADD CONSTRAINT Nhom_Cong_Viec_id_NCVC_foreign FOREIGN KEY (id_NCV_C) REFERENCES public.Nhom_Cong_Viec(id) ON DELETE SET NULL;
+
+
+-- Nhóm hồ sơ 
+ALTER TABLE ONLY public.Nhom_Ho_So
+    ADD CONSTRAINT Nhom_Ho_So_id_NHSC_foreign FOREIGN KEY (id_NHS_C) REFERENCES public.Nhom_Ho_So(id) ON DELETE SET NULL;
+
+-- Sự cố 
+ALTER TABLE ONLY public.Su_Co
+    ADD CONSTRAINT Su_Co_id_TB_foreign FOREIGN KEY (id_TB) REFERENCES public.Thiet_Bi(id) ON DELETE SET NULL;
+-- Hô sơ sự cố 
+ALTER TABLE ONLY public.Ho_So_Su_Co
+    ADD CONSTRAINT Ho_So_Su_Co_id_HS_foreign FOREIGN KEY (id_HS) REFERENCES public.Ho_So(id) ON DELETE SET NULL;
+ALTER TABLE ONLY public.Ho_So_Su_Co
+    ADD CONSTRAINT Ho_So_Su_Co_id_SC_foreign FOREIGN KEY (id_SC) REFERENCES public.Su_Co(id) ON DELETE SET NULL;
+
+-- thiết bị 
+ALTER TABLE ONLY public.Thiet_Bi
+    ADD CONSTRAINT Thiet_Bi_id_VT_foreign FOREIGN KEY (id_VT) REFERENCES public.Vi_Tri(id) ON DELETE SET NULL;
+
+ALTER TABLE ONLY public.Thiet_Bi
+    ADD CONSTRAINT Thiet_Bi_id_CB_foreign FOREIGN KEY (id_CB) REFERENCES public.Can_Bo(id) ON DELETE SET NULL;
+ALTER TABLE ONLY public.Thiet_Bi
+    ADD CONSTRAINT Thiet_Bi_id_DV_foreign FOREIGN KEY (id_DV) REFERENCES public.Don_Vi(id) ON DELETE SET NULL;
+ALTER TABLE ONLY public.Thiet_Bi
+    ADD CONSTRAINT Thiet_Bi_id_NTB_foreign FOREIGN KEY (id_NTB) REFERENCES public.Nhom_Trang_Bi(id) ON DELETE SET NULL;
+ALTER TABLE ONLY public.Thiet_Bi
+    ADD CONSTRAINT Thiet_Bi_id_LTB_foreign FOREIGN KEY (id_LTB) REFERENCES public.Loai_Trang_Bi(id) ON DELETE SET NULL;
+
+-- Vị trị 
+ALTER TABLE ONLY public.Vi_Tri
+    ADD CONSTRAINT Vi_Tri_id_VTC_foreign FOREIGN KEY (id_VT_C) REFERENCES public.Vi_Tri(id) ON DELETE SET NULL;
