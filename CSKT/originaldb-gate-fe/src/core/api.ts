@@ -33,6 +33,7 @@ const handleError = (e: any) => {
   }
   return Promise.reject(e);
 };
+// lấy danh sách item 
 export const getItems = <T>(
   collection: string,
   query?: Query<any, any> | undefined
@@ -41,6 +42,7 @@ export const getItems = <T>(
     handleError(e)
   );
 };
+// lấy thông tin chi tiết của item theo id 
 export const getItem = <T>(
   collection: string,
   key: any,
@@ -50,7 +52,7 @@ export const getItem = <T>(
     handleError(e)
   );
 };
-
+// update item theo id 
 export const update = <T>(
   collection: string,
   key: any,
@@ -61,7 +63,7 @@ export const update = <T>(
     handleError(e)
   );
 };
-
+// thêm mới 
 export const create = <T>(
   collection: string,
   item: Partial<T>,
@@ -71,6 +73,7 @@ export const create = <T>(
     handleError(e)
   );
 };
+//  tạo nhiều bàn ghi cùng lúc 
 export const createMulItems = <T>(
   collection: string,
   items: any
@@ -79,6 +82,7 @@ export const createMulItems = <T>(
     handleError(e)
   );
 };
+// truy vấn tổng hợp
 export const aggregateData = <T>(
   collection: string,
   options: AggregationOptions<T extends object ? any : any, any>
@@ -87,22 +91,27 @@ export const aggregateData = <T>(
     handleError(e)
   );
 };
-
+// lấy danh sách người dùng 
 export const getUsers = <T>(query?: Query<any, any> | undefined) => {
   return HTTP.request<T>(readUsers(query)).catch((e) => handleError(e));
 };
+// lấy thông tin người dùng hiện tại 
 export const me = <T>(query?: Query<any, any> | undefined) => {
   return HTTP.request<T>(readMe(query)).catch((e) => handleError(e));
 };
+// update thông tin người dùng hiện tại 
 export const updateCurrentUser = <T>(body: any) => {
   return HTTP.request<T>(updateMe(body)).catch((e) => handleError(e));
 };
+// xóa người dùng 
 export const removeUser = <T>(userId: string) => {
   return HTTP.request<T>(deleteUser(userId)).catch((e) => handleError(e));
 };
+// tạo thêm người dùng 
 export const createDirectusUser = <T>(query: any) => {
   return HTTP.request<T>(createUser(query)).catch((e) => handleError(e));
 };
+// update thông tin người dùng 
 export const updateDiretusUser = <T>(
   userId: string,
   item: Partial<T>,
@@ -112,11 +121,13 @@ export const updateDiretusUser = <T>(
     handleError(e)
   );
 };
+// xóa dữ liệu 
 export const deleteData = <T>(collection: string, key: any) => {
   return HTTP.request<T>(deleteItem(collection, key)).catch((e) =>
     handleError(e)
   );
 };
+//  xóa n
 export const removeItems = <T>(collection: string, query: any) => {
   return HTTP.request<T>(deleteItems(collection, query)).catch((e) =>
     handleError(e)
