@@ -5,6 +5,7 @@ import dm_quankhu from "@app/assets/svg/Ban_CNTT/dm_quankhu.svg";
 import dm_tinh from "@app/assets/svg/Ban_CNTT/dm_tinh.svg";
 import dm_huyen from "@app/assets/svg/Ban_CNTT/dm_huyen.svg";
 import dm_xa from "@app/assets/svg/Ban_CNTT/dm_xa.svg";
+import dm_binhchung from "@app/assets/svg/Ban_CNTT/dm_xa.svg";
 import dm_phongmaycntt from "@app/assets/svg/Ban_CNTT/dm_phongmaycntt.svg";
 import dm_chucvu from "@app/assets/svg/Cuc_CB/dm_chucvu.svg";
 import dm_capbac from "@app/assets/svg/Cuc_CB/dm_capbac.svg";
@@ -78,6 +79,8 @@ export const GenerateIconDM = (key: string) => {
       return dm_xa;
     case "/danh-muc-cntt/phong-may-cntt":
       return dm_phongmaycntt;
+    case "/danh-muc-cntt/binh-chung":
+      return dm_binhchung;
     case "/danh-muc-can-bo/chuc-vu":
       return dm_chucvu;
     case "/danh-muc-can-bo/cap-bac":

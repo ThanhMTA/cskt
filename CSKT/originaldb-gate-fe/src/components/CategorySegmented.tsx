@@ -23,6 +23,8 @@ export default function CategorySegmented() {
         (prev, curr) => [...prev].concat(curr?.actors_id?.tables || []),
         []
       ) || [];
+      console.log("Current Active Segment: ", tables);
+      console.log("👉   actorsDirectusRoles: ",   actorsDirectusRoles);
     if (tables && tables?.length > 0) {
       const segs = endPoints.filter(
         (x) => tables?.findIndex((t) => t?.tables_id?.name === x.value) > -1
@@ -54,6 +56,8 @@ export default function CategorySegmented() {
       } else {
         navigate("/");
       }
+      console.log("👉 EndPoints: ", endPoints);
+      console.log("Current Active Segment: ", segs);
     }
   }, [location.pathname, actorsDirectusRoles]);
   const onClick: MenuProps["onClick"] = (e: any) => {

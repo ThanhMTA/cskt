@@ -1,0 +1,1 @@
+import{e as o,J as r,O as n,Q as c,R as u}from"./index-DXrCg2vr.js";const t="pole_type",i=(e,a)=>o(t,{...e,fields:["*"],filter:a}),g=async e=>{var s;return{count:(s=(await r(t,{aggregate:{countDistinct:"id"},query:{filter:e}}))[0].countDistinct)==null?void 0:s.id}},d=e=>n(t,{...e}),l=(e,a)=>c(t,e,{...a}),y=e=>u(t,e);export{d as c,i as g,g as m,y as r,l as u};

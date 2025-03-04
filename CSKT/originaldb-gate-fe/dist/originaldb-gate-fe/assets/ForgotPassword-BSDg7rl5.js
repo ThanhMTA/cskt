@@ -1,0 +1,1 @@
+import{j as r,r as o}from"./index-DXrCg2vr.js";const e=()=>r.jsxDEV(o.Fragment,{children:"ForgotPassword"},void 0,!1,{fileName:"/workspace/cskt/CSKT/originaldb-gate-fe/src/modules/auth/pages/forgot-password/ForgotPassword.tsx",lineNumber:10,columnNumber:5},void 0);export{e as default};

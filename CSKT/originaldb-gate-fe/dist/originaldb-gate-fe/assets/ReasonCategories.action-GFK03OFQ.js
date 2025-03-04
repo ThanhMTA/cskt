@@ -1,0 +1,1 @@
+import{e as n,J as r,O as o,Q as c,R as u}from"./index-DXrCg2vr.js";const a="reason_categories",g=(t,e)=>n(a,{...t,fields:["*"],filter:e}),d=async t=>{var s;return{count:(s=(await r(a,{aggregate:{countDistinct:"id"},query:{filter:t}}))[0].countDistinct)==null?void 0:s.id}},m=t=>o(a,{...t}),R=(t,e)=>c(a,t,{...e}),D=t=>u(a,t);export{m as c,g,d as m,D as r,R as u};

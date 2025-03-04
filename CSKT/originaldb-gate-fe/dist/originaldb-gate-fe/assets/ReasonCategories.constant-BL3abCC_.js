@@ -1,0 +1,1 @@
+var E=(T=>(T.TB="TB",T.VT="VT",T))(E||{});const t={TB:"Trang bị",VT:"Vật tư"},_={NAME:"Nội dung lý do tăng giảm",CODE:"Mã lý do tăng giảm",TYPE_FOR:"Loại",IS_ENABLE:"Trạng thái"},l=[{label:t.TB,value:E.TB},{label:t.VT,value:E.VT}];export{_ as R,l as a};

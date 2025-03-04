@@ -1,0 +1,1 @@
+import{e as a}from"./index-DXrCg2vr.js";const r="major_categories",s=(i,e)=>{let t={_and:[{...e}]};return a(r,{alias:{parentId:"parent_id",value:"id",key:"id",title:"name"},fields:["id","key","name","value","title","parentId","parent_id"],filter:t})};export{s as g};

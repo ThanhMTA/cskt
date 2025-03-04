@@ -907,6 +907,19 @@ export type WardCategories = {
   short_name?: string | null;
 };
 
+export type BinhChungs = {
+  admin_unit_id?: string | AdministrativeUnitCategories | null;
+  code_ex?: string | null;
+  date_created?: string | null;
+  date_updated?: string | null;
+  district_id?: string | DistrictCategories | null;
+  id: string;
+  is_enable?: boolean | null;
+  name?: string | null;
+  order_number?: number | null;
+  short_name?: string | null;
+};
+
 export type Workstations = {
   address?: string | null;
   area?: number | null;
@@ -937,6 +950,7 @@ export type CustomDirectusTypes = {
   cable_boxes: CableBoxes[];
   condition_categories: ConditionCategories[];
   country_categories: CountryCategories[];
+  Binh_Chung: BinhChungs[];
   custom_permissions: CustomPermissions[];
   custom_permissions_directus_roles: CustomPermissionsDirectusRoles[];
   defense_lands: DefenseLands[];
@@ -968,7 +982,7 @@ export type CustomDirectusTypes = {
   document_type_categories: DocumentTypeCategories[];
   drain_tank_type: DrainTankType[];
   drain_tanks: DrainTanks[];
-  engine_room_categories: EngineRoomCategories[];
+  // engine_room_categories: EngineRoomCategories[];
   equipment_type_categories: EquipmentTypeCategories[];
   failure_cause_categories: FailureCauseCategories[];
   fiber_line_type_categories: FiberLineTypeCategories[];

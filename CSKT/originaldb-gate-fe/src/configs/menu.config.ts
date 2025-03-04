@@ -18,6 +18,7 @@ export const ActorDM = [
   "P_QL",
   "TB4",
   "VT_BM",
+  "test",
 ];
 export const ActorCSKT = ["CSKT_K1", "CSKT_DV"];
 export const NAVBAR_ITEMS: any[] = [
@@ -81,23 +82,38 @@ export const NAVBAR_ITEMS: any[] = [
       },
 
       {
-        label: "Dữ liệu dùng chung - Văn thư bảo mật",
+        label: "Dữ liệu dùng chung - Văn thư ",
         route: RouterUrl.SecurityPapers,
         key: "VT_BM",
         icon: icVanThuHome,
       },
+      
+      {
+        label: "Dữ liệu dùng chung - test thử",
+        route: RouterUrl.Test,
+        key: "test",
+        icon: icVanThuHome,
+      },
+      
     ],
   },
   {
     label: "Quản lý CSKT",
     key: MenuKey.TechnicalOrganization,
     route: "/quan-ly-cskt",
-    actor: ActorCSKT,
+    // actor: ActorCSKT,
+    actor:ActorDM
   },
   {
     label: "Quản trị hệ thống",
     key: MenuKey.SystemManagement,
     route: "/quan-tri-he-thong",
+    actor: ActorCSKT,
+  },
+  {
+    label: "test",
+    key: MenuKey.TestMenu,
+    route: "/test-menu",
     actor: ActorCSKT,
   },
 ];

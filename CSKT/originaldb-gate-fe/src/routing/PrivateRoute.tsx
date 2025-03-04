@@ -27,6 +27,7 @@ export const PrivateRoute = ({
     if (!collection) {
       return ''
     }
-    return userInfo?.permissions?.some(per => per.collection === collection && per?.action === PermissionAction.read) ? children : <AccessDenied />;
+    // return userInfo?.permissions?.some(per => per.collection === collection && per?.action === PermissionAction.read) ? children : <AccessDenied />;
+    return children
   }
 };

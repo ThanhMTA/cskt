@@ -55,7 +55,7 @@ const NavbarMenu: React.FC = () => {
     navigate(event?.route);
     setTimeout(() => setShowSubMenu(true), 500);
   };
-
+console.log("navbarMenu:",navbarItems)
   useEffect(() => {
     if (ActorCSKT.includes(userInfo?.role?.name)) {
       navigate("/quan-ly-cskt");
@@ -132,6 +132,7 @@ const NavbarMenu: React.FC = () => {
                             ...x,
                             order_number: (item?.actors_id as any).order_number,
                           };
+                      
                         })
                         .sort(
                           (a: any, b: any) =>

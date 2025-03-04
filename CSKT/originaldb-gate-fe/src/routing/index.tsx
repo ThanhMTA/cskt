@@ -13,6 +13,8 @@ import * as OperationCategories from '../modules/operation-categories';
 import * as PoliticsCategories from '../modules/politics-categories';
 import * as TechnicalOrganization from '../modules/techinical-organization';
 import * as SystemManagement from '../modules/system-management';
+import * as Test from '../modules/test'
+import * as TestMenu from '../modules/test-menu'
 import { Loading } from '../components/loading/Loading';
 // Guards
 import { PublicGuard } from '../guards/PublicGuard';
@@ -31,7 +33,10 @@ const modules = [
     OperationCategories,
     PoliticsCategories,
     TechnicalOrganization,
-    SystemManagement
+    SystemManagement,
+    Test, 
+    TestMenu
+  
 ]
 
 const router = createBrowserRouter([

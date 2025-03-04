@@ -13,6 +13,9 @@ export enum RouterUrl {
   TechnicalAssurance = "/quan-ly-cskt",
   ProblemSummary = "/tong-hop-su-co",
   SystemManagement = "/quan-tri-he-thong",
+  Test = "/test",
+  TestMenu = "/test-menu"
+
 }
 
 export enum MenuKey {
@@ -22,6 +25,7 @@ export enum MenuKey {
   TechnicalOrganization,
   Problems,
   SystemManagement,
+  TestMenu
 }
 
 export enum SubMenuKey {}

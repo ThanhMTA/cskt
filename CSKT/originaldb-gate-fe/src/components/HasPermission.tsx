@@ -22,6 +22,7 @@ export default function HasPermission({ action, children }: Props) {
     if (isLoading || !collection) {
       return <Skeleton />;
     } else {
-      return userInfo?.permissions?.some(per => per.collection === collection && per?.action === action) ? children : '';
+      // return userInfo?.permissions?.some(per => per.collection === collection && per?.action === action) ? children : '';
+      return children
     }
 }

@@ -13,6 +13,7 @@ const ProvinceCategories = loadable(() => import('./pages/ProvinceCategories'));
 const DistrictCategories = loadable(() => import('./pages/DistrictCategories'));
 const WardCategories = loadable(() => import('./pages/WardCategories'));
 const EngineRoomCategories = loadable(() => import('./pages/EngineRoomCategories'));
+const BinhChungs = loadable(() => import('./pages/BinhChung'));
 
 export enum ITCategoriesRoute {
   CountryCategories = `${RouterUrl.ITCategories}/quoc-gia`,
@@ -23,6 +24,9 @@ export enum ITCategoriesRoute {
   DistrictCategories = `${RouterUrl.ITCategories}/huyen`,
   WardCategories = `${RouterUrl.ITCategories}/xa`,
   EngineRoomCategories = `${RouterUrl.ITCategories}/phong-may-cntt`,
+  Binh_Chung= `${RouterUrl.ITCategories}/binh-chung`,
+  test= `${RouterUrl.ITCategories}/test`,
+
 }
 export const endPoints: IEndPoint[] = [
 
@@ -65,9 +69,18 @@ export const endPoints: IEndPoint[] = [
   {
     key: ITCategoriesRoute.EngineRoomCategories,
     value: 'engine_room_categories',
+    // value: 'Binh_Chung',
     label: "DM phòng máy CNTT",
+    // label: "DM Binh Chủng ",
+  },
+  {
+    key: ITCategoriesRoute.Binh_Chung,
+    value: 'Binh_Chung',
+    label: "DM Binh Chủng ",
   }
 ]
+// console.log("Danh sách EndPoints:", endPoints);
+
 
 export const Router: RouteObject = {
   path: RouterUrl.ITCategories,
@@ -112,9 +125,21 @@ export const Router: RouteObject = {
     },
     {
       path: ITCategoriesRoute.EngineRoomCategories,
-      element: <EngineRoomCategories />,
+      element: <BinhChungs />,
       id: '8',
-    }
+    }, 
+    {
+      path: ITCategoriesRoute.Binh_Chung,
+      element: <BinhChungs />,
+      id: '9',
+    }, 
+
+
   ]
 }
+console.log("Danh sách Router:", Router.children?.map((route) => ({
+  path: route.path,
+  id: route.id,
+})));
+
 

@@ -1,0 +1,1 @@
+import{e as s,J as r,O as c,Q as i,R as o}from"./index-DXrCg2vr.js";const a="unit_categories",g=(t,e)=>s(a,{...t,fields:["*"],filter:e}),d=async t=>{var n;return{count:(n=(await r(a,{aggregate:{countDistinct:"id"},query:{filter:t}}))[0].countDistinct)==null?void 0:n.id}},m=t=>c(a,{...t}),D=(t,e)=>i(a,t,{...e}),U=t=>o(a,t);export{m as c,g,d as m,U as r,D as u};
