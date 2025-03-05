@@ -60,24 +60,24 @@ export const endPoints: IEndPoint[] = [
     value: 'region_categories',
     label: "DM vùng",
   },
-  {
-    key: ITCategoriesRoute.MilitaryDistrictCategories,
-    value: 'military_district_categories',
-    label: "DM quân khu",
-  },
+  // {
+  //   key: ITCategoriesRoute.MilitaryDistrictCategories,
+  //   value: 'military_district_categories',
+  //   label: "DM quân khu",
+  // },
 
-  {
-    key: ITCategoriesRoute.EngineRoomCategories,
-    value: 'engine_room_categories',
-    // value: 'Binh_Chung',
-    label: "DM phòng máy CNTT",
-    // label: "DM Binh Chủng ",
-  },
-  {
-    key: ITCategoriesRoute.Binh_Chung,
-    value: 'Binh_Chung',
-    label: "DM Binh Chủng ",
-  }
+  // {
+  //   key: ITCategoriesRoute.EngineRoomCategories,
+  //   value: 'engine_room_categories',
+  //   // value: 'Binh_Chung',
+  //   label: "DM phòng máy CNTT",
+  //   // label: "DM Binh Chủng ",
+  // },
+  // {
+  //   key: ITCategoriesRoute.Binh_Chung,
+  //   value: 'Binh_Chung',
+  //   label: "DM Binh Chủng ",
+  // }
 ]
 // console.log("Danh sách EndPoints:", endPoints);
 

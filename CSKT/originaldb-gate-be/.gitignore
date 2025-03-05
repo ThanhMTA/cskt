@@ -1,0 +1,6 @@
+node_modules/*
+.env
+pgadmin-data/*
+redis-data/*
+postgres-data/*
+uploads/*

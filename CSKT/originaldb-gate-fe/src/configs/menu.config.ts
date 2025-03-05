@@ -37,24 +37,24 @@ export const NAVBAR_ITEMS: any[] = [
     },
     actor: ActorDM,
     children: [
-      {
-        label: "Dữ liệu dùng chung - Chính trị",
-        route: RouterUrl.PoliticsCategories,
-        key: "CCT",
-        icon: icChinhTriHome,
-      },
+      // {
+      //   label: "Dữ liệu dùng chung - Chính trị",
+      //   route: RouterUrl.PoliticsCategories,
+      //   key: "CCT",
+      //   icon: icChinhTriHome,
+      // },
       {
         label: "Dữ liệu dùng chung - Kỹ thuật",
         route: RouterUrl.TechnicalCategories,
         key: "CKT",
         icon: icKyThuatHome,
       },
-      {
-        label: "Dữ liệu dùng chung - Hậu cần",
-        route: RouterUrl.LogisticsCategories,
-        key: "CHC",
-        icon: icHauCanHome,
-      },
+      // {
+      //   label: "Dữ liệu dùng chung - Hậu cần",
+      //   route: RouterUrl.LogisticsCategories,
+      //   key: "CHC",
+      //   icon: icHauCanHome,
+      // },
 
       {
         label: "Dữ liệu dùng chung - Cán bộ",
@@ -62,12 +62,12 @@ export const NAVBAR_ITEMS: any[] = [
         key: "P_CB",
         icon: icCanBoHome,
       },
-      {
-        label: "Dữ liệu dùng chung - Tác Chiến",
-        route: RouterUrl.OperationCategories,
-        key: "P_TC",
-        icon: icTacChienHome,
-      },
+      // {
+      //   label: "Dữ liệu dùng chung - Tác Chiến",
+      //   route: RouterUrl.OperationCategories,
+      //   key: "P_TC",
+      //   icon: icTacChienHome,
+      // },
       {
         label: "Dữ liệu dùng chung - Quân lực",
         route: RouterUrl.ForceCategories,
@@ -81,19 +81,19 @@ export const NAVBAR_ITEMS: any[] = [
         icon: icCNTTHome,
       },
 
-      {
-        label: "Dữ liệu dùng chung - Văn thư ",
-        route: RouterUrl.SecurityPapers,
-        key: "VT_BM",
-        icon: icVanThuHome,
-      },
+      // {
+      //   label: "Dữ liệu dùng chung - Văn thư ",
+      //   route: RouterUrl.SecurityPapers,
+      //   key: "VT_BM",
+      //   icon: icVanThuHome,
+      // },
       
-      {
-        label: "Dữ liệu dùng chung - test thử",
-        route: RouterUrl.Test,
-        key: "test",
-        icon: icVanThuHome,
-      },
+      // {
+      //   label: "Dữ liệu dùng chung - test thử",
+      //   route: RouterUrl.Test,
+      //   key: "test",
+      //   icon: icVanThuHome,
+      // },
       
     ],
   },
@@ -101,8 +101,8 @@ export const NAVBAR_ITEMS: any[] = [
     label: "Quản lý CSKT",
     key: MenuKey.TechnicalOrganization,
     route: "/quan-ly-cskt",
-    // actor: ActorCSKT,
-    actor:ActorDM
+    actor: ActorCSKT,
+    // actor:ActorDM
   },
   {
     label: "Quản trị hệ thống",
