@@ -262,14 +262,14 @@ const OrganizationsAction: React.FC<OrganizationsActionType> = ({
                   require={value?.require}
                   statusUpdate={true}
                   dataIndex={value.dataIndex}
-                  disable={
-                    (parent_id !== null &&
-                      (value.dataIndex === "code" ||
-                        value.dataIndex === "parent_id")) ||
-                    (action === Action.Update && value.dataIndex === "code")
-                      ? true
-                      : false
-                  }
+                  // disable={
+                  //   (parent_id !== null &&
+                  //     (value.dataIndex === "code" ||
+                  //       value.dataIndex === "parent_id")) ||
+                  //   (action === Action.Update && value.dataIndex === "code")
+                  //     ? true
+                  //     : false
+                  // }
                   addressField={value?.dataIndex === "ward_id"}
                   treeField={{
                     isSelect: value?.dataIndex === "parent_id",

@@ -99,7 +99,7 @@ export const GenerateIconDM = (key: string) => {
     case "/danh-muc-quan-luc/chuyen-nganh":
     case "/danh-muc-ky-thuat/danh-muc-chuyen-nganh":
       return dm_chuyennganh;
-    case "/danh-muc-quan-luc/chung-loai-trang-thiet-bi":
+    case "/danh-muc-ky-thuat/chung-loai-trang-thiet-bi":
       return dm_trangbikythuat;
     case "/danh-muc-quan-luc/loai-thiet-bi":
       return dm_lydotanggiam;
@@ -117,12 +117,15 @@ export const GenerateIconDM = (key: string) => {
     case "/danh-muc-ky-thuat/xu-ly-su-co":
       return dm_mangxong;
     case "/danh-muc-ky-thuat/phan-loai-su-co":
+    case "/danh-muc-ky-thuat/nhom-trang-thiet-bi":
+
       return dm_phanloaisuco;
     case "/danh-muc-ky-thuat/mang-xong":
       return dm_mangxong;
     case "/danh-muc-ky-thuat/danh-muc-khu-vuc":
       return dm_khuvuc;
     case "/danh-muc-cuc-hau-can/loai-nha":
+    case "/danh-muc-ky-thuat/hang-san-xuat":
       return dm_loainha;
     case "/danh-muc-cuc-hau-can/loai-vat-chat":
       return dm_loaivatchat;
@@ -133,6 +136,7 @@ export const GenerateIconDM = (key: string) => {
     case "/danh-muc-tac-chien/diem-dat-quoc-phong":
       return dm_loaitram;
     case "/danh-muc-tac-chien/tram-thong-tin":
+    case "/danh-muc-ky-thuat/vi-tri":
       return dm_tram;
     case "/danh-muc-tac-chien/tuyen-cap":
       return dm_tuyencapquang;
@@ -145,12 +149,14 @@ export const GenerateIconDM = (key: string) => {
     case "/danh-muc-tac-chien/cot":
       return dm_mangxong;
     case "/danh-muc-tac-chien/tuyen-cap-quang":
+    case "/danh-muc-ky-thuat/nguon-dau-tu":
       return dm_tuyencapquang;
     case "/danh-muc-tac-chien/tuyen-cap-dong":
       return dm_tram;
     case "/danh-muc-tac-chien/tuyen-viba":
       return dm_mangxong;
     case "/van-thu-bao-mat/do-khan":
+    case "/danh-muc-can-bo/can-bo":
       return dm_dokhan;
     case "/van-thu-bao-mat/do-mat":
       return dm_domat;

@@ -8,11 +8,14 @@ const OfficerCategories = loadable(() => import('./layouts/OfficerCategories'));
 const PositionCategories = loadable(() => import('./pages/PositionCategories'));
 const RankCategories = loadable(() => import('./pages/RankCategories'));
 const QualificationCategories = loadable(() => import('./pages/QualificationCategories'));
+const CanBoCategories=loadable(()=> import('./pages/CanBoCategories'))
 
 export enum OfficerCategoriesRoute {
   PositionCategories = `${RouterUrl.OfficerCategories}/chuc-vu`,
   RankCategories = `${RouterUrl.OfficerCategories}/cap-bac`,
   QualificationCategories = `${RouterUrl.OfficerCategories}/trinh-do-hoc-van`,
+  DSCanbo = `${RouterUrl.OfficerCategories}/can-bo`,
+
 }
 
 export const endPoints: IEndPoint[] = [
@@ -30,6 +33,11 @@ export const endPoints: IEndPoint[] = [
     key: OfficerCategoriesRoute.QualificationCategories,
     value: 'qualification_categories',
     label: "DM trình độ học vấn",
+  },
+  {
+    key: OfficerCategoriesRoute.DSCanbo,
+    value: 'can_bo',
+    label: "DS cán bộ",
   }
 ]
 
@@ -50,6 +58,10 @@ export const Router: RouteObject = {
     {
       path: OfficerCategoriesRoute.QualificationCategories,
       element: <QualificationCategories />,
+    },
+    {
+      path: OfficerCategoriesRoute.DSCanbo,
+      element: <CanBoCategories />,
     },
   ]
 }

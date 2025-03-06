@@ -16,11 +16,23 @@ const SpliceClosures = loadable(() => import('./pages/SpliceClosures'));
 const IncidentTypeCategory = loadable(() => import('./pages/IncidentTypeCategories'));
 const MajorCategory = loadable(() => import('./pages/MajorCategory'));
 const ZoneCategories = loadable(() => import('./pages/ZoneCategories'));
+const SpeciesCategories = loadable(() => import("./pages/SpeciesCategories"));
+
+
 
 export enum TechnicalCategoriesRoute {
   UnitCategories = `${RouterUrl.TechnicalCategories}/don-vi-tinh`,
   // ReasonCategories = `${RouterUrl.TechnicalCategories}/ly-do-tang-giam-trang-thiet-bi`,
   ConditionCategories = `${RouterUrl.TechnicalCategories}/tinh-trang-trang-thiet-bi`,
+  SpeciesCategories = `${RouterUrl.TechnicalCategories}/chung-loai-trang-thiet-bi`,
+  NhomTBKT = `${RouterUrl.TechnicalCategories}/nhom-trang-thiet-bi`,
+  HangSX = `${RouterUrl.TechnicalCategories}/hang-san-xuat`,
+  NguonDauTu = `${RouterUrl.TechnicalCategories}/nguon-dau-tu`,
+  ViTri= `${RouterUrl.TechnicalCategories}/vi-tri`,
+
+
+
+
   // TBVTCategories = `${RouterUrl.TechnicalCategories}/trang-bi-ky-thuat-nhom-I-II`,
   // FailureCauseCategories = `${RouterUrl.TechnicalCategories}/nguyen-nhan-hong-hoc`,
   // TechnicalTeams = `${RouterUrl.TechnicalCategories}/to-sua-chua-co-dong`,
@@ -47,6 +59,31 @@ export const endPoints: IEndPoint[] = [
     key: TechnicalCategoriesRoute.ConditionCategories,
     value: 'condition_categories',
     label: "DM tình trạng",
+  },
+  {
+    key: TechnicalCategoriesRoute.SpeciesCategories,
+    value: "species_categories",
+    label: "DM chủng loại TBKT",
+  },
+  {
+    key: TechnicalCategoriesRoute.NhomTBKT,
+    value: "Nhom_TBKT",
+    label: "DM nhóm TBKT",
+  },
+  {
+    key: TechnicalCategoriesRoute.HangSX,
+    value: "hang_san_xuat",
+    label: "DS hãng sản xuất",
+  },
+  {
+    key: TechnicalCategoriesRoute.NguonDauTu,
+    value: "nguon_dau_tu",
+    label: "DS nguồn đầu tư",
+  },
+  {
+    key: TechnicalCategoriesRoute.ViTri,
+    value: "vi_tri",
+    label: "DS vị trí",
   },
   // {
   //   key: TechnicalCategoriesRoute.TBVTCategories,
@@ -104,6 +141,27 @@ export const Router: RouteObject = {
       path: TechnicalCategoriesRoute.ConditionCategories,
       element: <ConditionCategories />
     },
+    {
+      path: TechnicalCategoriesRoute.SpeciesCategories,
+      element: <SpeciesCategories />,
+    },
+    {
+      path: TechnicalCategoriesRoute.NhomTBKT,
+      element: <SpeciesCategories />,// sửa mục nhóm kỹ thuật 
+    },
+    {
+      path: TechnicalCategoriesRoute.HangSX,
+      element: <ConditionCategories  />,// sửa mục hãng sản xuất
+    },
+    {
+      path: TechnicalCategoriesRoute.NguonDauTu,
+      element: <ConditionCategories  />,// sửa mục hãng sản xuất
+    },
+    {
+      path: TechnicalCategoriesRoute.ViTri,
+      element: <ConditionCategories  />,// sửa mục hãng sản xuất
+    },
+
     // {
     //   path: TechnicalCategoriesRoute.TBVTCategories,
     //   element: <TBVTCategories />
