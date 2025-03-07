@@ -17,6 +17,11 @@ const IncidentTypeCategory = loadable(() => import('./pages/IncidentTypeCategori
 const MajorCategory = loadable(() => import('./pages/MajorCategory'));
 const ZoneCategories = loadable(() => import('./pages/ZoneCategories'));
 const SpeciesCategories = loadable(() => import("./pages/SpeciesCategories"));
+const NhomTBKTs=loadable(()=> import ('./pages/NhomTBKT'))
+const HangSXs=loadable(()=> import ('./pages/HangSX'))
+const NguonDTs=loadable(()=> import ('./pages/NguonDT'))
+
+
 
 
 
@@ -147,15 +152,15 @@ export const Router: RouteObject = {
     },
     {
       path: TechnicalCategoriesRoute.NhomTBKT,
-      element: <SpeciesCategories />,// sửa mục nhóm kỹ thuật 
+      element: <NhomTBKTs />,// sửa mục nhóm kỹ thuật 
     },
     {
       path: TechnicalCategoriesRoute.HangSX,
-      element: <ConditionCategories  />,// sửa mục hãng sản xuất
+      element: <HangSXs  />,// sửa mục hãng sản xuất
     },
     {
       path: TechnicalCategoriesRoute.NguonDauTu,
-      element: <ConditionCategories  />,// sửa mục hãng sản xuất
+      element: <NguonDTs  />,// sửa mục hãng sản xuất
     },
     // {
     //   path: TechnicalCategoriesRoute.ViTri,

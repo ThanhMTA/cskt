@@ -81,23 +81,24 @@ export default function Organizations() {
         {
           title: ORGANIZATIONS_FIELD_NAME.CODE_EX,
           dataIndex: "code_ex",
-          width: 300,
+          // width: 300,
         },
         {
           title: ORGANIZATIONS_FIELD_NAME.ID_EX,
           dataIndex: "id_ex",
-          width: 300,
+          // width: 300,
         },
         {
           title: "Địa bàn",
           dataIndex: "ward_id",
           key: "ward_id",
-          width: 300,
+          width: 200,
           render: (value: Ward) => getFullAddressString(value),
         },
         {
           title: ORGANIZATIONS_FIELD_NAME.IS_ENABLE,
           dataIndex: "is_enable",
+          width: 100,
           render: (flag: boolean) =>
             flag ? (
               <span className="text-green-600">Hoạt động</span>
@@ -223,7 +224,7 @@ export default function Organizations() {
         rowClassName="hover:bg-secondary group"
         loading={isLoading}
         pagination={false}
-        x={2500}
+        x={1400}
         actionClick={handleActions}
         filterColumns={[TableGeneralKeys.Name]}
         btnCreate={true}
