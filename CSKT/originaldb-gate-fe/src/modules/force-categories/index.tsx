@@ -16,6 +16,8 @@ const MajorCategory = loadable(
 const SpeciesCategories = loadable(() => import("./pages/SpeciesCategories"));
 const OrgTypeCategories = loadable(() => import("./pages/OrgTypeCategories"));
 const Organizations = loadable(() => import("./pages/Organizations"));
+const Vitris = loadable(() => import("./pages/Vitris"));
+
 const TBVTCategories = loadable(() => import("./pages/TBVTCategories"));
 // const PersonalIdentify = loadable(() => import('./pages/PersonalIdentify'));
 
@@ -24,9 +26,11 @@ export enum ForceCategoriesRoute {
   // ReasonCategories = `${RouterUrl.ForceCategories}/ly-do-tang-giam-trang-thiet-bi`,
   // ConditionCategories = `${RouterUrl.ForceCategories}/tinh-trang-trang-thiet-bi`,
   // MajorCategories = `${RouterUrl.ForceCategories}/chuyen-nganh`,
-  // SpeciesCategories = `${RouterUrl.ForceCategories}/chung-loai-trang-thiet-bi`,
-  // OrgTypeCategories = `${RouterUrl.ForceCategories}/loai-thiet-bi`,
+  SpeciesCategories = `${RouterUrl.ForceCategories}/chung-loai-trang-thiet-bi`,
+  OrgTypeCategories = `${RouterUrl.ForceCategories}/loai-thiet-bi`,
   Organizations = `${RouterUrl.ForceCategories}/don-vi`,
+  ViTris = `${RouterUrl.ForceCategories}/vi-tri`,
+
   // OrganizationsOrgTypeCategories = `${RouterUrl.ForceCategories}/gan-loai-don-vi`,
   // TBVTCategories = `${RouterUrl.ForceCategories}/trang-bi-ky-thuat-nhom-I-II`,
   // TBVTCategoriesMajorCategories = `${RouterUrl.ForceCategories}/gan-chuyen-nganh-ma-trang-bi`,
@@ -38,6 +42,11 @@ export const endPoints: IEndPoint[] = [
     key: ForceCategoriesRoute.Organizations,
     value: "organizations",
     label: "DM đơn vị",
+  },
+  {
+    key: ForceCategoriesRoute.ViTris,
+    value: "vi_tri",
+    label: "DS vị trí",
   },
   // {
   //   key: ForceCategoriesRoute.TBVTCategories,
@@ -101,10 +110,7 @@ export const Router: RouteObject = {
     //   path: ForceCategoriesRoute.MajorCategories,
     //   element: <MajorCategory />,
     // },
-    // {
-    //   path: ForceCategoriesRoute.SpeciesCategories,
-    //   element: <SpeciesCategories />,
-    // },
+
     // {
     //   path: ForceCategoriesRoute.OrgTypeCategories,
     //   element: <OrgTypeCategories />,
@@ -112,6 +118,10 @@ export const Router: RouteObject = {
     {
       path: ForceCategoriesRoute.Organizations,
       element: <Organizations />,
+    },
+    {
+      path: ForceCategoriesRoute.ViTris,
+      element: <Vitris />,
     },
     // {
     //   path: ForceCategoriesRoute.TBVTCategories,

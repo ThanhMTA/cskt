@@ -51,6 +51,7 @@ export default function Organizations() {
           title: ORGANIZATIONS_FIELD_NAME.CODE,
           dataIndex: "code",
           fixed: "left",
+          key: TableGeneralKeys.Name,
           render: (value: string, record: OrganizationsData) => {
             return (
               <span
@@ -74,7 +75,7 @@ export default function Organizations() {
         },
         {
           title: ORGANIZATIONS_FIELD_NAME.PARENT_ID,
-          dataIndex: "parent",
+          dataIndex: "parent_id",
           render: (parent: OrganizationsData) => parent?.name,
         },
         {
@@ -209,7 +210,7 @@ export default function Organizations() {
     <div className="w-[900px]">
       <BaseTable
         hiddenIndex={true}
-        total={meta?.count || 0}
+        // total={meta?.count || 0}
         className="mt-5"
         isReloadButton={false}
         setFilter={setFilter}

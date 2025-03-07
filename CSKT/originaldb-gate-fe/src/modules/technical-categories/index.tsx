@@ -28,7 +28,7 @@ export enum TechnicalCategoriesRoute {
   NhomTBKT = `${RouterUrl.TechnicalCategories}/nhom-trang-thiet-bi`,
   HangSX = `${RouterUrl.TechnicalCategories}/hang-san-xuat`,
   NguonDauTu = `${RouterUrl.TechnicalCategories}/nguon-dau-tu`,
-  ViTri= `${RouterUrl.TechnicalCategories}/vi-tri`,
+  // ViTri= `${RouterUrl.TechnicalCategories}/vi-tri`,
 
 
 
@@ -80,11 +80,11 @@ export const endPoints: IEndPoint[] = [
     value: "nguon_dau_tu",
     label: "DS nguồn đầu tư",
   },
-  {
-    key: TechnicalCategoriesRoute.ViTri,
-    value: "vi_tri",
-    label: "DS vị trí",
-  },
+  // {
+  //   key: TechnicalCategoriesRoute.ViTri,
+  //   value: "vi_tri",
+  //   label: "DS vị trí",
+  // },
   // {
   //   key: TechnicalCategoriesRoute.TBVTCategories,
   //   value: 'tbvt_categories',
@@ -157,10 +157,10 @@ export const Router: RouteObject = {
       path: TechnicalCategoriesRoute.NguonDauTu,
       element: <ConditionCategories  />,// sửa mục hãng sản xuất
     },
-    {
-      path: TechnicalCategoriesRoute.ViTri,
-      element: <ConditionCategories  />,// sửa mục hãng sản xuất
-    },
+    // {
+    //   path: TechnicalCategoriesRoute.ViTri,
+    //   element: <ConditionCategories  />,// sửa mục hãng sản xuất
+    // },
 
     // {
     //   path: TechnicalCategoriesRoute.TBVTCategories,

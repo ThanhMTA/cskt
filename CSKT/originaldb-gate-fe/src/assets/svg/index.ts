@@ -136,7 +136,7 @@ export const GenerateIconDM = (key: string) => {
     case "/danh-muc-tac-chien/diem-dat-quoc-phong":
       return dm_loaitram;
     case "/danh-muc-tac-chien/tram-thong-tin":
-    case "/danh-muc-ky-thuat/vi-tri":
+    case "/danh-muc-quan-luc/vi-tri":
       return dm_tram;
     case "/danh-muc-tac-chien/tuyen-cap":
       return dm_tuyencapquang;

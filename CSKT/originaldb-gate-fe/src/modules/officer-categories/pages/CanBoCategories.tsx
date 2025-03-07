@@ -139,13 +139,13 @@ export default function Page() {
         openModal(
             <CanBoAction id ={item.id} action={Action.View} />,
             {
-                width: '40vw',
+                width: '50vw',
                 onModalClose(res) {
                     if (res?.success) {
                         openModal(
                             <CanBoAction id ={item.id} action={Action.Update} />,
                             {
-                                width: '40vw',
+                                width: '50vw',
                                 onModalClose() {
                                     reloadPage()
                                 },
