@@ -27,12 +27,19 @@ type OrganizationsActionType = {
   action: Action;
   detail?: OrganizationsData;
   parent_id?: string;
+  // type: string;
+  dataSource: Partial<OrganizationsData[]>;
+  setDataSource: React.Dispatch<
+    React.SetStateAction<Partial<OrganizationsData[]>>
+  >;
 };
 
 const OrganizationsAction: React.FC<OrganizationsActionType> = ({
   action,
   detail,
-  parent_id,
+  parent_id = null,
+  dataSource,
+  setDataSource,
 }) => {
   const [form] = Form.useForm();
   const loading = useLoading();
@@ -78,6 +85,9 @@ const OrganizationsAction: React.FC<OrganizationsActionType> = ({
       const parent_id = value?.parent_id?.value
         ? value?.parent_id?.value
         : value?.parent_id;
+        // const tree_level =
+        // parentDetail?.tree_level && +parentDetail?.tree_level + 1;
+     
       const military_distric_id = value?.military_distric_id?.value
         ? value?.military_distric_id?.value
         : value?.military_distric_id;
@@ -99,13 +109,28 @@ const OrganizationsAction: React.FC<OrganizationsActionType> = ({
           });
           break;
         case Action.Create:
-          await createOrganizations({
+          const res =  await createOrganizations({
             ...value,
             military_distric_id,
             parent_id,
             ward_id,
             tree_level,
           });
+          if (res?.code) {
+                      setDataSource([
+                        ...dataSource.map((it: OrganizationsData | undefined) => {
+                          if (!it) return it;
+                          if (it?.id === parent_id) {
+                            return {
+                              ...it,
+                              has_child: true,
+                            };
+                          }
+                          return it;
+                        }),
+                        res,
+                      ]);
+                    }
           openMessage({
             type: "success",
             content: `Thêm mới thành công`,
@@ -228,6 +253,7 @@ const OrganizationsAction: React.FC<OrganizationsActionType> = ({
     if (["military_district_id"].includes(dataIndex)) {
       return selectMap(dataSelection?.militaryDistrict, "name", "id");
     }
+    
   };
 
   return (
@@ -262,14 +288,14 @@ const OrganizationsAction: React.FC<OrganizationsActionType> = ({
                   require={value?.require}
                   statusUpdate={true}
                   dataIndex={value.dataIndex}
-                  // disable={
-                  //   (parent_id !== null &&
-                  //     (value.dataIndex === "code" ||
-                  //       value.dataIndex === "parent_id")) ||
-                  //   (action === Action.Update && value.dataIndex === "code")
-                  //     ? true
-                  //     : false
-                  // }
+                  disable={
+                    (parent_id !== null &&
+                      (value.dataIndex === "code" ||
+                        value.dataIndex === "parent_id")) ||
+                    (action === Action.Update && value.dataIndex === "code")
+                      ? true
+                      : false
+                  }
                   addressField={value?.dataIndex === "ward_id"}
                   treeField={{
                     isSelect: value?.dataIndex === "parent_id",
@@ -281,7 +307,11 @@ const OrganizationsAction: React.FC<OrganizationsActionType> = ({
                     dataSelect: getDataSelect(value.dataIndex),
                   }}
                   isNumberField={value.dataIndex === "order_number"}
-                  isRadioField={value?.dataIndex === "is_enable"}
+                  isRadioField={
+                    value?.dataIndex === "is_enable" ||
+                    value?.dataIndex === "is_planning" ||
+                    value?.dataIndex === "has_child"
+                  }
                 />
               );
             })}
@@ -298,7 +328,12 @@ const OrganizationsAction: React.FC<OrganizationsActionType> = ({
                     require={value?.require}
                     statusUpdate={false}
                     dataIndex={value.dataIndex}
-                    isRadioField={value?.dataIndex === "is_enable"}
+                    // isRadioField={value?.dataIndex === "is_enable"}
+                    isRadioField={
+                      value?.dataIndex === "is_enable" ||
+                      value?.dataIndex === "is_planning" ||
+                      value?.dataIndex === "has_child"
+                    }
                   />
                 </div>
               );

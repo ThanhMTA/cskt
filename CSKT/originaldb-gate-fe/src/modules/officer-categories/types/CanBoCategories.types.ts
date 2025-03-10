@@ -8,6 +8,7 @@ export type CanBoCategoriesData = {
     chucvu_id:string;
     donvi_id:string;
     ward_id: string;
+    gioi_tinh:string;
     created_at: string; // TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     updated_at: string; // TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW()
   };

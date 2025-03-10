@@ -32,7 +32,7 @@ export enum ForceCategoriesRoute {
   ViTris = `${RouterUrl.ForceCategories}/vi-tri`,
 
   // OrganizationsOrgTypeCategories = `${RouterUrl.ForceCategories}/gan-loai-don-vi`,
-  // TBVTCategories = `${RouterUrl.ForceCategories}/trang-bi-ky-thuat-nhom-I-II`,
+  TBVTCategories = `${RouterUrl.ForceCategories}/trang-bi-ky-thuat-nhom-I-II`,
   // TBVTCategoriesMajorCategories = `${RouterUrl.ForceCategories}/gan-chuyen-nganh-ma-trang-bi`,
   // PersonalIdentify = `${RouterUrl.ForceCategories}/quan-nhan`,
 }
@@ -48,11 +48,11 @@ export const endPoints: IEndPoint[] = [
     value: "vi_tri",
     label: "DS vị trí",
   },
-  // {
-  //   key: ForceCategoriesRoute.TBVTCategories,
-  //   value: "tbvt_categories",
-  //   label: "DM TBKT nhóm 1",
-  // },
+  {
+    key: ForceCategoriesRoute.TBVTCategories,
+    value: "tbvt_categories",
+    label: "DM TBKT nhóm 1",
+  },
   // {
   //   key: ForceCategoriesRoute.UnitCategories,
   //   value: "unit_categories",
@@ -123,10 +123,10 @@ export const Router: RouteObject = {
       path: ForceCategoriesRoute.ViTris,
       element: <Vitris />,
     },
-    // {
-    //   path: ForceCategoriesRoute.TBVTCategories,
-    //   element: <TBVTCategories />,
-    // },
+    {
+      path: ForceCategoriesRoute.TBVTCategories,
+      element: <TBVTCategories />,
+    },
     // {
     //   path: ForceCategoriesRoute.PersonalIdentify,
     //   element: <PersonalIdentify />

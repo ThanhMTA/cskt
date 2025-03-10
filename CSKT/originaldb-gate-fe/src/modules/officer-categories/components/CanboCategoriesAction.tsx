@@ -167,6 +167,12 @@ export default function CanBoAction({ id, action }: Props) {
         content: detail?.code || null,
         dataIndex: "code"
       },
+      ,
+      {
+        title: "Giới tính",
+        content: detail?.gioi_tinh || null,
+        dataIndex: "gioi_tinh"
+      },
       {
         title: "Cấp bậc",
         content: detail?.capbac_id || null,
@@ -225,6 +231,16 @@ export default function CanBoAction({ id, action }: Props) {
     if (["ward_id"].includes(dataIndex)) {
       return selectMap(
         dataSelection?.diachis,
+        "name",
+        "id"
+      );
+    }
+    if (["gioi_tinh"].includes(dataIndex)) {
+      return selectMap(
+        [
+          { id: "Nam", name: "Nam" },
+          { id: "Nữ", name: "Nữ" }
+        ],
         "name",
         "id"
       );
@@ -289,7 +305,8 @@ return (
                               selectField={{
                                   isSelect:
                                       value?.dataIndex === "capbac_id" ||
-                                      value?.dataIndex === "chucvu_id", 
+                                      value?.dataIndex === "chucvu_id" ||
+                                      value?.dataIndex ==="gioi_tinh",
                                       // value?.dataIndex === "ward_id",
                                   dataSelect: getDataSelect(value.dataIndex),
                               }}

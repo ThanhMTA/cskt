@@ -2,7 +2,7 @@ import { aggregateData, create, deleteData, getItem, getItems, update } from "@a
 import { IMeta, IMetaDistinct, IRequest } from "@app/interfaces/common.interface"
 import { NhomTBKTData } from "../types/NhomTBKT.types";
 
-const END_POINT = "Nhom_TBKT";
+const END_POINT = "nhom_TBKT";
 
 export const getNhomTBKTList = (query: IRequest, filter: any) => {
     return getItems<NhomTBKTData[]>(END_POINT, {

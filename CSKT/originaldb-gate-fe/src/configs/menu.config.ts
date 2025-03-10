@@ -111,9 +111,9 @@ export const NAVBAR_ITEMS: any[] = [
     actor: ActorCSKT,
   },
   {
-    label: "test",
+    label: "QLTTB",
     key: MenuKey.TestMenu,
-    route: "/test-menu",
+    route: "/trang-thiet-bi",
     actor: ActorCSKT,
   },
 ];

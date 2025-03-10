@@ -4,7 +4,7 @@ import {
   PlusOutlined,
 } from "@ant-design/icons";
 import BaseTable from "@app/components/BaseTable";
-import { getFullAddressString, listToTree, makeid } from "@app/core/helper";
+import { listToTree, makeid } from "@app/core/helper";
 import { TableProps } from "antd";
 import { useEffect, useMemo, useState } from "react";
 import { useModal } from "@app/contexts/ModalContext";
@@ -13,45 +13,49 @@ import { ITableAction } from "@app/interfaces/table.interface";
 import { IMeta } from "@app/interfaces/common.interface";
 import { OrganizationsData } from "../types/Organizations.types";
 import {
-  getOrganizationsList,
-  metaOrganizations,
+  getOrganizationsList, 
+  metaOrganizations
 } from "../store/Organizations.action";
+// import OrganizationsAction from "../components/OrganizationsAction";
 import OrganizationsAction from "../components/OrganizationsAction";
 import { ORGANIZATIONS_FIELD_NAME } from "../constants/Organizations.constant";
 import { TableGeneralKeys } from "@app/enums/table.enum";
-import { Ward } from "@app/modules/it-categories/types/Ward.type";
+import { useLocation } from "react-router-dom";
+import { RouterUrl } from "@app/enums/router.enum";
+import { OrganizationsMaxLength } from "../enums/Organizations.enum";
 import { DEFAULT_PAGESIZE } from "@app/configs/app.config";
 
 export const ACTION_TABLE: ITableAction[] = [
   {
     key: Action.Create,
     icon: <PlusCircleOutlined />,
-    className: "border-none text-primary shadow-#0",
+    className: "text-primary",
     title: "Thêm mới",
   },
 ];
 
-export default function Organizations() {
+export default function Organizations(props: any) {
   // variables
+  const { pathname } = useLocation();
   const { openModal } = useModal();
   const [dataSource, setDataSource] = useState<Partial<OrganizationsData[]>>(
     []
   );
   const [meta, setMeta] = useState<IMeta>({ count: 0 });
+  const [isLoading, setIsLoading] = useState(false);
   const [pagination, setPagination] = useState<{
     page: number;
     pageSize: number;
   }>({ page: 1, pageSize: DEFAULT_PAGESIZE });
   const [filter, setFilter] = useState<any>({});
-  const [isLoading, setIsLoading] = useState(false);
+  const [expandedRowKeys, setExpandedRowKeys] = useState<string[]>([]);
+
   const COLUMNS: TableProps["columns"] = useMemo(
     () =>
       [
         {
           title: ORGANIZATIONS_FIELD_NAME.CODE,
           dataIndex: "code",
-          fixed: "left",
-          key: TableGeneralKeys.Name,
           render: (value: string, record: OrganizationsData) => {
             return (
               <span
@@ -68,44 +72,12 @@ export default function Organizations() {
           dataIndex: "name",
           key: TableGeneralKeys.Name,
         },
-        {
-          title: ORGANIZATIONS_FIELD_NAME.SHORT_NAME,
-          dataIndex: "short_name",
-          key: TableGeneralKeys.ShortName,
-        },
-        {
-          title: ORGANIZATIONS_FIELD_NAME.PARENT_ID,
-          dataIndex: "parent_id",
-          render: (parent: OrganizationsData) => parent?.name,
-        },
-        {
-          title: ORGANIZATIONS_FIELD_NAME.CODE_EX,
-          dataIndex: "code_ex",
-          // width: 300,
-        },
-        {
-          title: ORGANIZATIONS_FIELD_NAME.ID_EX,
-          dataIndex: "id_ex",
-          // width: 300,
-        },
-        {
-          title: "Địa bàn",
-          dataIndex: "ward_id",
-          key: "ward_id",
-          width: 200,
-          render: (value: Ward) => getFullAddressString(value),
-        },
-        {
-          title: ORGANIZATIONS_FIELD_NAME.IS_ENABLE,
-          dataIndex: "is_enable",
-          width: 100,
-          render: (flag: boolean) =>
-            flag ? (
-              <span className="text-green-600">Hoạt động</span>
-            ) : (
-              <span className="text-red">Không hoạt động</span>
-            ),
-        },
+        // {
+        //   title: ORGANIZATIONS_FIELD_NAME.UNIT,
+        //   dataIndex: "unit",
+        //   //width: 330,
+        //   render: (unit: any) => unit,
+        // },
       ]?.map((i) => {
         return {
           ...i,
@@ -114,9 +86,25 @@ export default function Organizations() {
       }),
     []
   );
-
+  // let type = "";
+  // switch ("/" + pathname.split("/")[1]) {
+  //   case RouterUrl.ForceCategories:
+  //     type = OrganizationsType.TB;
+  //     break;
+  //   case RouterUrl.LogisticsCategories:
+  //     type = OrganizationsType.HC;
+  //     break;
+  //   case RouterUrl.PoliticsCategories:
+  //     type = OrganizationsType.CT;
+  //     break;
+  //   case RouterUrl.TechnicalCategories:
+  //     type = OrganizationsType.VT;
+  //     break;
+  //   default:
+  //     break;
+  // }
   // functions
-  const fetchData = async (filter: any) => {
+  const fetchData = async (page: number, pageSize: number, filter: any) => {
     try {
       setIsLoading(true);
       let initFilter = {};
@@ -127,9 +115,14 @@ export default function Organizations() {
         await getOrganizationsList({ limit: -1 }, { ...filter, ...initFilter }),
         await metaOrganizations(filter),
       ]);
-      setDataSource(response[0]);
+      // setDataSource(response[0]);
+      setDataSource((prevData) => {
+        // console.log("Giá trị trước đó của dataSource:", prevData);
+        return [...response[0]]; // Tạo một mảng mới để React nhận diện thay đổi
+      });
       setMeta(response[1]);
       setIsLoading(false);
+      // console.log("danh sach don vi",dataSource)
     } catch (error) {
       setIsLoading(false);
     }
@@ -137,9 +130,13 @@ export default function Organizations() {
 
   const fetchChildData = async (parentId: string) => {
     // Check if there are already items with the same parentId
+
+
     const hasChildData = dataSource.some(
       (item: any) => item.parent_id === parentId
     );
+    console.log("danh sach don vi con",hasChildData )
+
 
     if (hasChildData) {
       return; // Do not call API if child data already exists
@@ -147,11 +144,10 @@ export default function Organizations() {
 
     try {
       setIsLoading(true);
-      const response = await getOrganizationsList(
-        { limit: -1 },
-        { parent_id: parentId }
-      );
+      const response =  await getOrganizationsList({ limit: -1 },  { parent_id: parentId },)
+
       setDataSource([...dataSource, ...response]);
+      console.log('chill',response )
       setIsLoading(false);
     } catch (error) {
       setIsLoading(false);
@@ -159,24 +155,48 @@ export default function Organizations() {
   };
 
   const handleViewDetail = (item: OrganizationsData) => {
-    openModal(<OrganizationsAction detail={item} action={Action.View} />, {
-      width: "50vw",
-      onModalClose(res) {
-        if (res?.success) {
-          openModal(
-            <OrganizationsAction detail={item} action={Action.Update} />,
-            {
-              width: "50vw",
-              onModalClose() {
-                reloadPage();
-              },
-            }
-          );
-        } else {
-          reloadPage();
-        }
-      },
-    });
+    openModal(
+      <OrganizationsAction 
+      // type={type}
+      
+      action={Action.View}
+      detail={item}
+      parent_id="1"
+      dataSource={dataSource}
+      setDataSource={setDataSource}
+       />,
+
+      {
+        width: "50vw",
+        onModalClose(res) {
+          if (res?.success) {
+            openModal(
+              <OrganizationsAction 
+              // detail={item} action={Action.Update}
+              // type={type}
+              detail={item}
+              action={Action.Update}
+              dataSource={dataSource}
+              setDataSource={setDataSource}
+               />,
+          
+              {
+                width: "50vw",
+                onModalClose(res) {
+                  if (res?.success) {
+                    // reloadPage();
+                  } else {
+                    // reloadPage();
+                  }
+                },
+              }
+            );
+          } else {
+            // reloadPage();
+          }
+        },
+      }
+    );
   };
 
   const handleActions = (key: Action, item: OrganizationsData) => {
@@ -186,36 +206,40 @@ export default function Organizations() {
         break;
       case Action.Create:
         openModal(
-          <OrganizationsAction parent_id={item?.id} action={Action.Create} />,
+          <OrganizationsAction
+          dataSource={dataSource}
+          setDataSource={setDataSource}
+          // type={type}
+          parent_id={item?.id}
+          action={Action.Create} 
+           />,
+       
           {
             width: "50vw",
-            onModalClose(res) {
-              if (res?.success) {
-                reloadPage();
-              }
-            },
+            onModalClose(res) {},
           }
         );
     }
   };
 
   const reloadPage = () => {
-    fetchData(filter);
+    fetchData(pagination.page, pagination.pageSize, filter);
   };
 
   useEffect(() => {
-    fetchData(filter);
-  }, [filter]);
+    fetchData(pagination.page, pagination.pageSize, filter);
+  }, [pagination, filter]);
   //return
   return (
-    <div className="w-[900px]">
+    <div className="w-[900px]" >
       <BaseTable
-        hiddenIndex={true}
-        // total={meta?.count || 0}
+        hiddenIndex
+        total={meta?.count || 0}
         className="mt-5"
-        isReloadButton={false}
+        {...props}
         setFilter={setFilter}
         setPagination={setPagination}
+        isReloadButton={false}
         dataSource={listToTree(dataSource)}
         columns={COLUMNS}
         actionList={ACTION_TABLE}
@@ -224,24 +248,49 @@ export default function Organizations() {
         rowClassName="hover:bg-secondary group"
         loading={isLoading}
         pagination={false}
-        x={1400}
-        actionClick={handleActions}
+        paginationCustom={{
+          current: pagination.page,
+          pageSize: pagination.pageSize,
+          total: meta?.count,
+        }}
+        onChange={({ current, pageSize }: any) => {
+          setPagination({ page: current, pageSize });
+          fetchData(current, pageSize, filter);
+        }}
+        actionClick={(key: Action, item: OrganizationsData) =>
+          handleActions(key, item)
+        }
         filterColumns={[TableGeneralKeys.Name]}
         btnCreate={true}
         handleCreate={() => {
-          openModal(<OrganizationsAction action={Action.Create} />, {
-            width: "50vw",
-            onModalClose(res) {
-              if (res?.success) {
-                reloadPage();
-              }
-            },
-          });
+          openModal(
+            <OrganizationsAction
+            // type={type}
+            action={Action.Create}
+            dataSource={dataSource}
+            setDataSource={setDataSource}
+             />,
+   
+            {
+              width: "50vw",
+              onModalClose(res) {
+                // if (res?.success) {
+                //   reloadPage();
+                // }
+              },
+            }
+          );
         }}
         expandable={{
+          expandedRowKeys: expandedRowKeys,
           onExpand: (expanded, record) => {
             if (expanded) {
               fetchChildData(record.id);
+              setExpandedRowKeys([...expandedRowKeys, record.id]);
+            } else {
+              setExpandedRowKeys(
+                expandedRowKeys.filter((i) => i !== record.id)
+              );
             }
           },
           expandIcon: ({ expanded, onExpand, record }) => {
@@ -266,7 +315,6 @@ export default function Organizations() {
             ) : null;
           },
         }}
-        rowKey={"id"}
       />
     </div>
   );

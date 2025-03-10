@@ -53,6 +53,11 @@ export default function TBVTCategories(props: any) {
     () =>
       [
         {
+          title: TBVT_CATEGORIES_FIELD_NAME.NAME,
+          dataIndex: "name",
+          key: TableGeneralKeys.Name,
+        },
+        {
           title: TBVT_CATEGORIES_FIELD_NAME.CODE,
           dataIndex: "code",
           render: (value: string, record: TBVTCategoriesData) => {
@@ -66,11 +71,7 @@ export default function TBVTCategories(props: any) {
             );
           },
         },
-        {
-          title: TBVT_CATEGORIES_FIELD_NAME.NAME,
-          dataIndex: "name",
-          key: TableGeneralKeys.Name,
-        },
+     
         {
           title: TBVT_CATEGORIES_FIELD_NAME.UNIT,
           dataIndex: "unit",

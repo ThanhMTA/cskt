@@ -36,7 +36,7 @@ export const endPoints: IEndPoint[] = [
   },
   {
     key: OfficerCategoriesRoute.DSCanbo,
-    value: 'can_bo',
+    value: 'personal_identifies',
     label: "DS cán bộ",
   }
 ]

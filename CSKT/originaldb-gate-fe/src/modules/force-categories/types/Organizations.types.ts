@@ -11,7 +11,7 @@ export interface OrganizationsData {
   attribute?: string;
   is_enable: boolean;
   parent_id?: string;
-  tree_level?: number;
+  tree_level: number;
   tree_path?: string;
   isHover: boolean;
   parent?: any;

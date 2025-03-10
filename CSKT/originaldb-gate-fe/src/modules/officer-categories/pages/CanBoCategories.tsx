@@ -64,6 +64,12 @@ export default function Page() {
 
         },
         {
+            title: "Giới tính",
+            dataIndex: "gioi_tinh",
+            key: "gioi_tinh",
+
+        },
+        {
             title: "Cấp bậc",
             dataIndex: "capbac_id",
             key: "capbac_id",
