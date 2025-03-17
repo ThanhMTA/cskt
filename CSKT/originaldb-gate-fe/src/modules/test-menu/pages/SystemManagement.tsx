@@ -9,6 +9,8 @@ import { SystemType } from "../enum/SystemCategory.enum";
 import { HistoryOutlined, UserOutlined } from "@ant-design/icons";
 import ActivityManagement from "../components/Activity";
 import AccountManagement from "../components/Account";
+import TTBManagement from "../components/QLTTB";
+
 export default function TestManagement() {
     const navigate = useNavigate();
     const [activeTab, setActiveTab] = useState<string>(SystemType.Activity);
@@ -20,6 +22,14 @@ export default function TestManagement() {
         navigate({ search: params.toString() });
     };
     const itemsTabs: TabsProps["items"] = useMemo(() => [
+        {
+            key: SystemType.TTB,
+            label: "Quản lý trang thiết bị",
+            children: <div className="bg-[#F5F5F6] h-svh">
+                <TTBManagement/>
+            </div>,
+            icon: <HistoryOutlined />,
+        },
         {
             key: SystemType.Activity,
             label: "Quản lý lịch sử truy cập",

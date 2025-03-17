@@ -10,8 +10,8 @@ export interface VitriData {
     // military_district_id?: string;
     // attribute?: string;
     is_enable: boolean;
-    parent_id?: string;
-    tree_level?: number;
+    parent_id: string;
+    // tree_level?: number;
     // tree_path?: string;
     // isHover: boolean;
     parent?: any;

@@ -5,18 +5,23 @@ import { Organizations, PersonalIdentify } from "@app/types/types";
 import { ITableAction } from "@app/interfaces/table.interface";
 import { FilterFilled, MenuFoldOutlined, RedoOutlined, SearchOutlined } from "@ant-design/icons";
 import { ACCOUNT_TYPE } from "../enum/Account.enum";
-import { Badge, Button, Form, Input, Tag, Tooltip, TreeSelect, Col, Checkbox } from "antd";
+import { Badge, Button, Form, Input, Tag, Tooltip, TreeSelect, Col, Checkbox, Select } from "antd";
 import { arrayToTree } from "performant-array-to-tree";
 import { listToTree } from "@app/core/helper";
 import { getUsersList, metaUsers, getOrganizationTree } from "../stores/Account.action";
+import { getTTB, metaTTB, getCommonCategory, getPlaceTree } from "../stores/QLTTB.action";
+import { TableGeneralKeys } from "@app/enums/table.enum";
 import { DEFAULT_PAGESIZE } from "@app/configs/app.config";
 import dayjs from "dayjs";
 import { userStore } from "@app/store/user/user.store";
 import { Role } from "../enum/Role.enum";
 import { IMeta } from "@app/interfaces/common.interface";
 import { useModal } from "@app/contexts/ModalContext";
-import AccountDrawer from "./AccountModal";
+// import TTBAction from "./QLTTBModal";
 import { ic_geo } from "@app/assets/svg";
+import { group } from "console";
+import TTBAction from "./QLTTBModal";
+import { TTBData } from "../types/TTB.type";
 
 export const ACTION_TABLE: ITableAction[] = [];
 const COLOR_RANGE: any = {
@@ -28,7 +33,12 @@ const tagInputStyle: React.CSSProperties = {
     justifyItems: 'center',
     alignItems: 'center'
 };
-const AccountManagement: React.FC = () => {
+interface ICommonCategory {
+    species: any[],
+    group: any[],
+    // position: any[],
+}
+const TTBManagement: React.FC = () => {
     const [form] = Form.useForm();
     const { openModal } = useModal();
     const [meta, setMeta] = useState<IMeta>({ count: 0 });
@@ -37,6 +47,7 @@ const AccountManagement: React.FC = () => {
     const [open, setOpen] = useState(true);
     const { userInfo } = userStore()
     const [organizations, setOrganizations] = useState<any>([]);
+    const [places, setPlaces] = useState<any>([]);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [datasource, setDatasource] = useState<PersonalIdentify[]>([])
     const [pagination, setPagination] = useState<{ page: number, pageSize: number }>({ page: 1, pageSize: DEFAULT_PAGESIZE });
@@ -44,13 +55,18 @@ const AccountManagement: React.FC = () => {
         setOpen(!open);
     };
     const [filterLevel, setFilterLevel] = useState<any>({})
-
+    const [commonCategories, setCommonCategories] = useState<ICommonCategory>({
+        species: [],
+        group: [],
+        // position: [],
+    });
     const columns: any[] = useMemo(() => {
         return [
             {
-                title: "Họ và tên",
-                dataIndex: ACCOUNT_TYPE['FULL_NAME'],
-                key: ACCOUNT_TYPE['FULL_NAME'],
+                title: "Tên trang bị",
+                dataIndex: "name",
+                fixed: 'left',
+                key: TableGeneralKeys.Name,
                 render: (value: string, record: any) => {
                     console.log('record: ', record)
                     return (
@@ -58,73 +74,124 @@ const AccountManagement: React.FC = () => {
                             className="font-semibold text-sm cursor-pointer text-[#3D73D0]"
                             onClick={() => handleActions(Action.View, record)}
                         >
-                            {record?.personal_id?.name ?? ''}
+                            {value ?? ""}
                         </span>
                     );
                 },
             },
             {
-                title: "Email",
-                dataIndex: ACCOUNT_TYPE['EMAIL'],
-                key: ACCOUNT_TYPE['EMAIL'],
+                title: "Ký hiệu",
+                dataIndex: "nick_name",
+                key: "nick_name",
                 render: (value: any) => {
                     return value
-                }
-            },
-            {
-                title: "Cấp bậc",
-                dataIndex: ACCOUNT_TYPE['RANK'],
-                key: ACCOUNT_TYPE['RANK'],
-                render: (value: any, record: any) => record?.personal_id?.rank_id?.name ?? '',
-            },
-            {
-                title: "Chức vụ",
-                dataIndex: ACCOUNT_TYPE['POSITION'],
-                key: ACCOUNT_TYPE['POSITION'],
-                render: (value: any, record: any) => record?.personal_id?.position_id?.name ?? '',
-            },
-            {
-                title: "Đơn vị",
-                dataIndex: ACCOUNT_TYPE['ORGANIZATION'],
-                key: ACCOUNT_TYPE['ORGANIZATION'],
-                render: (value: any, record: any) => record?.personal_id?.org_id?.name ?? '',
-            },
-            {
-                title: "Số điện thoại",
-                dataIndex: ACCOUNT_TYPE['PHONE_NUMBER'],
-                key: ACCOUNT_TYPE['PHONE_NUMBER'],
-                render: (value: any, record: any) => record?.personal_id?.phone_number ?? '',
+                },
+                //     width:150
 
             },
             {
-                title: "Ngày sinh",
-                dataIndex: ACCOUNT_TYPE['DOB'],
-                key: ACCOUNT_TYPE['DOB'],
-                render: (value: any, record: any) => record?.personal_id?.birthday ? dayjs(record?.personal_id?.birthday).format('DD/MM/YYYY') : ''
+                title: "serial number",
+                dataIndex: "serial_number",
+                render: (value: any) => {
+                    return value
+                },
             },
             {
-                title: "Trạng thái",
-                dataIndex: ACCOUNT_TYPE['STATUS'],
-                key: ACCOUNT_TYPE['STATUS'],
+                title: "Đơn vị tính",
+                dataIndex: "unit_id",
+                key: "unit_id",
+                render: (value: any, record: any) => record?.unit_id?.name ?? '',
+            },
+            {
+                title: "Đơn vị biên chế",
+                dataIndex: "org_id",
+                key: "org_id",
+                render: (value: any, record: any) => record?.org_id?.name ?? '',
+            },
+            {
+                title: "số lượng",
+                dataIndex: "quantity",
+                key: "quantity",
                 render: (value: any) => {
-                    return (
-                        Status[value] ? <Tag style={tagInputStyle} color={COLOR_RANGE[value]}>{Status[value]}</Tag> : <Tag style={tagInputStyle}>{'Chưa kích hoạt'}</Tag>
-                    )
-                }
+                    return value
+                },
+
+            },
+            {
+                title: "Tình trạng",
+                dataIndex: "condition_id",
+                key: "condition_id",
+                render: (value: any, record: any) => record?.condition_id?.name ?? '',
+            },
+            {
+                title: "Chủng loại",
+                dataIndex: "species_id",
+                key: "species_id",
+                render: (value: any, record: any) => record?.species_id?.name ?? '',
+            },
+            {
+                title: "Nhóm trang thiết bị",
+                dataIndex: "group_id",
+                key: "group_id",
+                render: (value: any, record: any) => record?.group_id?.name ?? '',
+            },
+            {
+                title: "Nguồn đầu tư",
+                dataIndex: "investor_id",
+                key: "investor_id",
+                render: (value: any, record: any) => record?.investor_id?.name ?? '',
+            },
+            {
+                title: "Hãng sản xuất",
+                dataIndex: "manufacturer_id",
+                key: "manufacturer_id",
+                render: (value: any, record: any) => record?.manufacturer_id?.name ?? '',
+            },
+            {
+                title: "Người quản lý",
+                dataIndex: "manager_id",
+                key: "manager_id",
+                render: (value: any, record: any) => record?.manager_id?.name ?? '',
+            },
+            {
+                title: "Vị trí hiện tại",
+                dataIndex: "place_id",
+                key: "place_id",
+                render: (value: any, record: any) => record?.place_id?.name ?? '',
+            },
+            {
+
+                title: "Trạng thái",
+                dataIndex: "is_enable",
+                key: "is_enable",
+                render: (flag: boolean) => flag ? <span className="text-green-600">Hoạt động</span> : <span className="text-red">Không hoạt động</span>
+
             },
         ];
     }, []);
 
-    const handleActions = (key: Action, item?: any) => {
+    const handleActions = (key: Action, item: TTBData) => {
         switch (key) {
             case Action.View:
                 openModal(
-                    <AccountDrawer detail={item} action={Action.Update} />,
+                    <TTBAction id={item.id} action={Action.View} />,
                     {
-                        width: '40vw',
+                        width: '50vw',
                         onModalClose(res) {
                             if (res?.success) {
-                                reloadData()
+                                if (res?.success) {
+                                    openModal(
+                                        <TTBAction id={item.id} action={Action.Update} />,
+                                        {
+                                            width: '50vw',
+                                            onModalClose() {
+                                                reloadData()
+                                            },
+                                        }
+                                    )
+                                } else {
+                                    reloadData();
+                                }
                             }
                         },
                     }
@@ -132,9 +199,9 @@ const AccountManagement: React.FC = () => {
                 break;
             case Action.Create:
                 openModal(
-                    <AccountDrawer action={Action.Create} />,
+                    <TTBAction action={Action.Create} />,
                     {
-                        width: '40vw',
+                        width: '50vw',
                         onModalClose(res) {
                             if (res?.success) {
                                 setTimeout(() => reloadData(), 10000);
@@ -161,38 +228,53 @@ const AccountManagement: React.FC = () => {
     ) => {
         setIsLoading(true);
         try {
-            let init_filter = {};
-            switch (userInfo?.role?.name) {
-                case Role.ADMIN:
-                    init_filter = {
-                        status: {
-                            _in: [StatusUser.active, StatusUser.draft]
-                        }
-                    };
-                    break;
-                default:
-                    init_filter = {
-                        status: {
-                            _in: [StatusUser.active]
-                        }
-                    };
-                    break;
-            }
-            if (Object.keys(filter).length !== 0) {
-                init_filter = {
-                    personal_id: filter,
-                    ...init_filter
-                }
-            }
+            // let init_filter = {};
+            // switch (userInfo?.role?.name) {
+            //     case Role.ADMIN:
+            //         init_filter = {
+            //             status: {
+            //                 _in: [StatusUser.active, StatusUser.draft]
+            //             }
+            //         };
+            //         break;
+            //     default:
+            //         init_filter = {
+            //             status: {
+            //                 _in: [StatusUser.active]
+            //             }
+            //         };
+            //         break;
+            // }
+            // if (Object.keys(filter).length !== 0) {
+            //     init_filter = {
+            //         personal_id: filter,
+            //         ...init_filter
+            //     }
+            // }
+            // const res = await Promise.all([getTTB({ limit: pageSize, page }, filter), metaCanBo(filter)]);
 
             const response: any = await Promise.all([
                 getOrganizationTree(),
-                metaUsers({ ...init_filter }),
-                getUsersList({ limit: pageSize, page }, { ...init_filter })
+                // metaUsers({ ...init_filter }),
+                // getUsersList({ limit: pageSize, page }, { ...init_filter }),
+                getCommonCategory('species_categories'),
+                getCommonCategory('nhom_TBKT'),
+                // getCommonCategory('vi_tri'),
+                // getPlaceTree()
             ]);
+            const res = await Promise.all([getTTB({ limit: pageSize, page }, filter), metaTTB(filter)]);
+
             setOrganizations(response[0]);
-            setMeta(response[1]);
-            setDatasource(response[2])
+            setMeta(res[1]);
+            setDatasource(res[0])
+            setCommonCategories({
+                species: response[1],
+                group: response[2],
+                // role: role
+            })
+            // setPlaces(response[3])
+            // console.log('data: ', response[3])
+
         } catch (error) {
             console.log('error: ', error)
         } finally {
@@ -238,25 +320,49 @@ const AccountManagement: React.FC = () => {
                 ],
             };
         }
-        if (form.getFieldValue('is_offical')?.length) {
+        if (form.getFieldValue('group_id')?.length) {
             filterValue = {
                 _and: [
                     ...filterValue._and,
                     {
-                        is_offical: {
-                            _in: form.getFieldValue('is_offical'),
+                        group_id: {
+                            _in: form.getFieldValue('group_id'),
                         }
                     },
                 ],
             };
         }
-        if (form.getFieldValue('org_manage_id')?.length) {
+        if (form.getFieldValue('species_id')?.length) {
             filterValue = {
                 _and: [
                     ...filterValue._and,
                     {
-                        org_manage_id: {
-                            _in: form.getFieldValue('org_manage_id'),
+                        species_id: {
+                            _in: form.getFieldValue('species_id'),
+                        }
+                    },
+                ],
+            };
+        }
+        if (form.getFieldValue('org_id')?.length) {
+            filterValue = {
+                _and: [
+                    ...filterValue._and,
+                    {
+                        org_id: {
+                            _in: form.getFieldValue('org_id'),
+                        }
+                    },
+                ],
+            };
+        }
+        if (form.getFieldValue('place_id')?.length) {
+            filterValue = {
+                _and: [
+                    ...filterValue._and,
+                    {
+                        place_id: {
+                            _in: form.getFieldValue('place_id'),
                         }
                     },
                 ],
@@ -277,21 +383,22 @@ const AccountManagement: React.FC = () => {
         setFilter(filterValue);
         setFilterLevel(filterLevel)
     };
-        const ManagementOptions: any = [
-            {
-                title: "Ban truyền dẫn quang",
-                key: "TQD",
-            },
-            {
-                title: "Ban Visat",
-                key: "visat",
-            },
-         
-        ];
+    const ManagementOptions: any = [
+        {
+            title: "Ban truyền dẫn quang",
+            key: "TQD",
+        },
+        {
+            title: "Ban Visat",
+            key: "visat",
+        },
+
+    ];
     return (
         <div
-            className="overflow-hidden rounded-lg bg-white"
-            // style={{ height: `calc(100vh - ${LayoutSpace.SectionMargin}px)` }}
+            // thêm w-[1180px] để sửa lại kích thước của phần nội dung, p-3 để cách lề dưới
+            className="overflow-hidden rounded-lg bg-white w-[1180px] p-3"
+        // style={{ height: `calc(100vh - ${LayoutSpace.SectionMargin -50}px)` }}
         >
             <div className="flex gap-4 p-4" style={{ height: `calc(100% - ${LayoutSpace.TabMargin}px)` }}>
                 <div
@@ -346,11 +453,12 @@ const AccountManagement: React.FC = () => {
                                 }
                             }}
                         >
-                                                        <Form.Item
+                            {/* ban quản lý trang thiết bị */}
+                            <Form.Item
                                 label={
                                     <div className="flex flex-row gap-2">
                                         <img src={ic_geo} />
-                                        <span className="text-[14px] font-bold leading-[24px]">Phân cấp</span>
+                                        <span className="text-[14px] font-bold leading-[24px]">Quản lý</span>
                                     </div>
                                 }
                                 className="mt-2"
@@ -378,6 +486,7 @@ const AccountManagement: React.FC = () => {
                                     </Checkbox.Group>
                                 </Col>
                             </Form.Item>
+                            {/* đơn vị  */}
                             <Form.Item
                                 label={
                                     <div className="flex flex-row gap-2">
@@ -403,35 +512,15 @@ const AccountManagement: React.FC = () => {
                                     treeDefaultExpandAll
                                     // treeData={organizationTree}
                                     treeData={listToTree(arrayToTree([...organizations], { dataField: null }))}
-
-                                // onChange={(checkedValues) => {
-                                //     form.setFieldsValue({ org_manage_id: checkedValues });
-                                //     formValueChange();
-                                // }}
+                                    onChange={(checkedValues) => {
+                                        form.setFieldsValue({ org_id: checkedValues });
+                                        formValueChange();
+                                    }}
                                 />
                             </Form.Item>
-                            {/* <Form.Item name="org_id" label="" className="mb-0">
-                                <TreeSelect
-                                    showSearch
-                                    allowClear
-                                    multiple={false}
-                                    treeLine
-                                    filterTreeNode={(input: any, treeNode: any) => {
-                                        return (
-                                            treeNode.title.toLowerCase().indexOf(input.toLowerCase()) >= 0
-                                        );
-                                    }}
-                                    // className="border rounded"
-                                    placeholder="Tìm kiếm tên đơn vị"
-                                    dropdownStyle={{ maxHeight: 400, overflow: "auto" }}
-                                    treeDataSimpleMode
-                                    style={{ width: "100%" }}
-                                    treeDefaultExpandAll
-                                    treeData={listToTree(arrayToTree([...organizations], { dataField: null }))}
-                                    suffixIcon={<SearchOutlined className="text-sm text-black" />}
-                                />
-                            </Form.Item> */}
-                             <Form.Item
+
+                            {/* vị trí ==> tương tự như là đơn vị */}
+                            <Form.Item
                                 label={
                                     <div className="flex flex-row gap-2">
                                         <img src={ic_geo} />
@@ -451,18 +540,19 @@ const AccountManagement: React.FC = () => {
                                     }}
                                     className="-mt-3"
                                     style={{ width: "100%" }}
-                                    placeholder="Chọn đơn vị"
+                                    placeholder="Chọn vị trí hiện tại"
                                     allowClear
                                     treeDefaultExpandAll
                                     // treeData={organizationTree}
                                     treeData={listToTree(arrayToTree([...organizations], { dataField: null }))}
-
-                                // onChange={(checkedValues) => {
-                                //     form.setFieldsValue({ org_manage_id: checkedValues });
-                                //     formValueChange();
-                                // }}
+                                    onChange={(checkedValues) => {
+                                        form.setFieldsValue({place_id: checkedValues });
+                                        formValueChange();
+                                    }}
                                 />
+
                             </Form.Item>
+                            {/* chủng loại => định dạng select */}
                             <Form.Item
                                 label={
                                     <div className="flex flex-row gap-2">
@@ -470,31 +560,24 @@ const AccountManagement: React.FC = () => {
                                         <span className="text-[14px] font-bold leading-[24px]">chủng loại</span>
                                     </div>
                                 }>
-                                <TreeSelect
-                                    multiple
-                                    showCheckedStrategy="SHOW_ALL"
-                                    treeCheckable
-                                    size="small"
-                                    showSearch
-                                    filterTreeNode={(input: any, treeNode: any) => {
-                                        return (
-                                            treeNode.title.toLowerCase().indexOf(input.toLowerCase()) >= 0
-                                        );
-                                    }}
-                                    className="-mt-3"
-                                    style={{ width: "100%" }}
-                                    placeholder="Chọn vị trí"
+                                <Select
+                                    className="flex border-0 w-full"
                                     allowClear
-                                    treeDefaultExpandAll
-                                    // treeData={organizationTree}
-                                    treeData={listToTree(arrayToTree([...organizations], { dataField: null }))}
+                                    placeholder="Chọn chủng loại"
+                                    options={commonCategories.species}
+                                    showSearch
+                                    filterOption={(input: string, option: any) => {
+                                        return (option?.label ?? "").toLowerCase().includes(input.toLowerCase());
+                                    }}
+                                    onChange={(checkedValues) => {
+                                        form.setFieldsValue({ species_id: checkedValues });
+                                        formValueChange();
+                                        console.log("kiem tra", checkedValues)
+                                    }}
 
-                                // onChange={(checkedValues) => {
-                                //     form.setFieldsValue({ org_manage_id: checkedValues });
-                                //     formValueChange();
-                                // }}
                                 />
                             </Form.Item>
+                            {/* nhóm trang thiết bị */}
                             <Form.Item
                                 label={
                                     <div className="flex flex-row gap-2">
@@ -502,41 +585,36 @@ const AccountManagement: React.FC = () => {
                                         <span className="text-[14px] font-bold leading-[24px]">Nhóm</span>
                                     </div>
                                 }>
-                                <TreeSelect
-                                    multiple
-                                    showCheckedStrategy="SHOW_ALL"
-                                    treeCheckable
-                                    size="small"
-                                    showSearch
-                                    filterTreeNode={(input: any, treeNode: any) => {
-                                        return (
-                                            treeNode.title.toLowerCase().indexOf(input.toLowerCase()) >= 0
-                                        );
-                                    }}
-                                    className="-mt-3"
-                                    style={{ width: "100%" }}
-                                    placeholder="Chọn đơn vị"
+                                <Select
+                                    className="flex border-0 w-full"
                                     allowClear
-                                    treeDefaultExpandAll
-                                    // treeData={organizationTree}
-                                    treeData={listToTree(arrayToTree([...organizations], { dataField: null }))}
-
-                                // onChange={(checkedValues) => {
-                                //     form.setFieldsValue({ org_manage_id: checkedValues });
-                                //     formValueChange();
-                                // }}
+                                    placeholder="Chọn nhóm TBKT"
+                                    options={commonCategories.group}
+                                    showSearch
+                                    filterOption={(input: string, option: any) => {
+                                        return (option?.label ?? "").toLowerCase().includes(input.toLowerCase());
+                                    }}
+                                    onChange={(checkedValues) => {
+                                        form.setFieldsValue({ group_id: checkedValues });
+                                        formValueChange();
+                                    }}
                                 />
                             </Form.Item>
                         </Form>
                     </div>
                 </div>
-                <div className="flex-1 overflow-auto">
+                {/* max-w-[870px]==> để chỉnh sửa kích thước */}
+                <div className=" flex flex-col w-full min-w-0  overflow-hidden">
                     <div className="flex flex-row pb-2 items-center justify-between">
+                        {/* <div className="flex flex-row  items-center "> */}
+
                         <div className="text-nowrap text-base font-medium leading-[26px]">{`Danh sách cán bộ ${renderOrganizationName(title)}`}</div>
+                        {/* <div className="flex flex-row items-center min-w-200 gap-2"> */}
                         <div className="flex flex-row items-center min-w-200 gap-2">
+
                             <Input
                                 className="rounded-full"
-                                placeholder="Nhập tên cán bộ"
+                                placeholder="Nhập tên trang thiết bị"
                                 allowClear
                                 onChange={(e: any) => {
                                     setPagination({ page: 1, pageSize: DEFAULT_PAGESIZE });
@@ -556,9 +634,9 @@ const AccountManagement: React.FC = () => {
                             />
                             <Button onClick={() => {
                                 openModal(
-                                    <AccountDrawer action={Action.Create} />,
+                                    <TTBAction action={Action.Create} />,
                                     {
-                                        width: '40vw',
+                                        width: '50vw',
                                         onModalClose(res) {
                                             if (res?.success) {
                                                 reloadData()
@@ -578,6 +656,12 @@ const AccountManagement: React.FC = () => {
                         setPagination={setPagination}
                         rowKey={"id"}
                         actionClick={handleActions}
+
+
+                        x={2500}
+
+
+
                         onChange={({ current, pageSize }: any) => {
                             setPagination({ page: current, pageSize });
                             fetchData(current, pageSize, filter);
@@ -596,4 +680,4 @@ const AccountManagement: React.FC = () => {
         </div>
     );
 };
-export default AccountManagement;
+export default TTBManagement;
