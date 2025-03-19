@@ -1,6 +1,6 @@
 
 export enum SystemType {
-  Activity = "ACTIVITY",
+  Failure = "Failure",
   Account = "ACCOUNT",
   TTB="TTB"
 }

@@ -9,12 +9,13 @@ import { SystemType } from "../enum/SystemCategory.enum";
 import { HistoryOutlined, UserOutlined } from "@ant-design/icons";
 import ActivityManagement from "../components/Activity";
 import AccountManagement from "../components/Account";
+import FailureManagement from "../components/Failure";
 import TTBManagement from "../components/QLTTB";
 
 export default function TestManagement() {
     const navigate = useNavigate();
-    const [activeTab, setActiveTab] = useState<string>(SystemType.Activity);
-    const modalType = useRef<SystemType>(SystemType.Activity);
+    const [activeTab, setActiveTab] = useState<string>(SystemType.TTB);
+    const modalType = useRef<SystemType>(SystemType.TTB);
     const location = useLocation();
     const params = new URLSearchParams(location.search);
     const handleStatusChange = (value: any) => {
@@ -31,12 +32,12 @@ export default function TestManagement() {
             icon: <HistoryOutlined />,
         },
         {
-            key: SystemType.Activity,
-            label: "Quản lý lịch sử truy cập",
+            key: SystemType.Failure,
+            label: "Quản lý sự cố",
             children: <div className="bg-[#F5F5F6] h-svh">
-                <ActivityManagement />
+                <FailureManagement />
             </div>,
-            icon: <HistoryOutlined />,
+            icon: <HistoryOutlined/>,
         },
         {
             key: SystemType.Account,
@@ -52,7 +53,7 @@ export default function TestManagement() {
 
     return (
         <Space {...SPACE_PROP_DEFAULT}>
-            <PageName title="QUẢN TRỊ HỆ THỐNG" />
+            <PageName title="QUẢN Lý TRANG THIẾT BỊ" />
             <section className="relative">
                 <div
                     className={`bg-white w-full absolute`}

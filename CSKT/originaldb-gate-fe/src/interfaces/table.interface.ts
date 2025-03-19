@@ -17,7 +17,6 @@ export interface ITableMethods {
     key: Action,
     item: any
   ) => void;
-
   setFilter?: any;
   setPagination?: any;
   reloadClick?: () => void; // click button reload data,
@@ -27,6 +26,7 @@ export interface ITableMethods {
   ) => void;
   onChangeBaseTable?: (event: TableProps["pagination"] | any) => void;
   handleCreate?: () => void;
+  // onClick?: (record: any) => void;
 }
 
 export interface ITable extends TableProps, ITableMethods {
@@ -46,7 +46,6 @@ export interface ITable extends TableProps, ITableMethods {
   y?: number;
   isFullWidth?: boolean;
 }
-
 export interface ITablePagination {
   current: number;
   pageSize: number;
