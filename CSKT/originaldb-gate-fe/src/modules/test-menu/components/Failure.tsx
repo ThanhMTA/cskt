@@ -327,7 +327,7 @@ const FailureManagement: React.FC = () => {
 
             // setPlaces(response[3])
             // console.log('data: ', response[3])
-
+            
         } catch (error) {
             console.log('error: ', error)
         } finally {

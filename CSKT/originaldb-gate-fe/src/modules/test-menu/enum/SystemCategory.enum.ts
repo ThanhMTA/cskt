@@ -2,5 +2,6 @@
 export enum SystemType {
   Failure = "Failure",
   Account = "ACCOUNT",
-  TTB="TTB"
+  TTB="TTB",
+  Input_Output="Input_Output"
 }

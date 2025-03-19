@@ -3,7 +3,6 @@ import loadable from '../../components/Loadable';
 import { RouterUrl } from '@app/enums/router.enum';
 import { CategoriesProvider } from '@app/contexts/CategoriesContext';
 import { IEndPoint } from '@app/interfaces/common.interface';
-
 const ITCategories = loadable(() => import('./pages/ITCategories'));
 const CountryCategories = loadable(() => import('./pages/CountryCategories'));
 const AdministrativeUnitCategories = loadable(() => import('./pages/AdministrativeUnitCategories'));

@@ -5,7 +5,7 @@ import { Organizations, PersonalIdentify } from "@app/types/types";
 import { ITableAction } from "@app/interfaces/table.interface";
 import { FilterFilled, MenuFoldOutlined, RedoOutlined, SearchOutlined } from "@ant-design/icons";
 import { ACCOUNT_TYPE } from "../enum/Account.enum";
-import { Badge, Button, Form, Input, Tag, Tooltip, TreeSelect, Col, Checkbox, Select } from "antd";
+import { Badge, Button, Form, Splitter, Input, Col, Row, Tag, Tooltip, TreeSelect, Checkbox, Select, DatePicker, Space } from "antd";
 import { arrayToTree } from "performant-array-to-tree";
 import { listToTree } from "@app/core/helper";
 import { getUsersList, metaUsers, getOrganizationTree } from "../stores/Account.action";
@@ -38,7 +38,7 @@ interface ICommonCategory {
     group: any[],
     // position: any[],
 }
-const TTBManagement: React.FC = () => {
+const In_OutManagement: React.FC = () => {
     const [form] = Form.useForm();
     const { openModal } = useModal();
     const [meta, setMeta] = useState<IMeta>({ count: 0 });
@@ -394,221 +394,31 @@ const TTBManagement: React.FC = () => {
         },
 
     ];
+    const In_OutOptions: any = [
+        {
+            title: "Nhận trang thiết bị",
+            key: "in",
+        },
+        {
+            title: "Bàn giao trang thiết bị",
+            key: "out",
+        },
+
+    ];
     return (
         <div
             // thêm w-[1180px] để sửa lại kích thước của phần nội dung, p-3 để cách lề dưới
-            className="overflow-hidden rounded-lg bg-white w-[1180px]  p-3  "
+            className="overflow-hidden rounded-lg bg-white w-[1180px]  "
         // style={{ height: `calc(100vh - ${LayoutSpace.SectionMargin}px)` }}
         >
-            <div className="flex gap-4 p-4"  style={{ height: `calc(100% - ${LayoutSpace.TabMargin}px)`, }}>
-                <div
-                    className={`transition-all duration-300 ${open ? "w-[268px]" : "w-16 border"
-                        } approval-filter-container flex max-h-full flex-col rounded-lg bg-white`}
-                >
-                    <div
-                        className={`flex items-center px-4 py-2 ${open ? "justify-between rounded-t-lg border" : "justify-center"
-                            }`}
-                    >
-                        <h3
-                            className={`${open ? "block" : "hidden"} text-nowrap text-base font-medium leading-[26px]`}
-                        >
-                            Bộ lọc tìm kiếm
-                        </h3>
-                        <div className="flex flex-row gap-2">
-                            <Tooltip title="Làm mới bộ lọc">
-                                <button className="m-0 p-0" onClick={() => {
-                                    handleActions(Action.Create)
-                                }}>
-                                    <RedoOutlined />
-                                </button>
-                            </Tooltip>
-                            <button onClick={toggleOpen}>
-                                <Badge color="#0074D6" count={0} className="scale-[80%] text-xl">
-                                    {open ? <MenuFoldOutlined /> : <FilterFilled className="text-[#8C9093]" />}
-                                </Badge>
-                            </button>
-                        </div>
-                    </div>
-                    <div
-                        className={`${open ? "block w-[268px]" : "hidden"
-                            } flex-1 overflow-auto rounded-b-lg border border-t-0 p-4`}
-                    >
-                        <Form
-                            form={form}
-                            layout="vertical"
-                            onValuesChange={(e: any) => {
-                                setPagination({ page: 1, pageSize: DEFAULT_PAGESIZE });
-                                if (e.org_id) {
-                                    setTitle(e.org_id)
-                                    setFilter((prev: any) => ({
-                                        ...prev,
-                                        org_id: {
-                                            _eq: e.org_id,
-                                        },
-                                    }));
-                                } else {
-                                    const { org_id, ...filterWithoutOrg } = filter;
-                                    setFilter(filterWithoutOrg)
-                                    setTitle(null)
-                                }
-                            }}
-                        >
-                            {/* ban quản lý trang thiết bị */}
-                            <Form.Item
-                                label={
-                                    <div className="flex flex-row gap-2">
-                                        <img src={ic_geo} />
-                                        <span className="text-[14px] font-bold leading-[24px]">Quản lý</span>
-                                    </div>
-                                }
-                                className="mt-2"
-                            >
-                                <Col className="px-0 -mt-3" span={30}>
-                                    <Checkbox.Group
-                                        style={{ width: "100%" }}
-                                        className="flex flex-col"
-                                        onChange={(checkedValues) => {
-                                            form.setFieldsValue({ level: checkedValues });
-                                            formValueChange();
-                                        }}
-                                    >
-                                        {ManagementOptions?.map(
-                                            (value: { title: string; key: string }, index: number) => (
-                                                <Col className="mt-[10px]">
-                                                    <Checkbox value={value.key}>
-                                                        <span className="text-[14px] font-normal leading-[23px]">
-                                                            {value.title}
-                                                        </span>
-                                                    </Checkbox>
-                                                </Col>
-                                            )
-                                        )}
-                                    </Checkbox.Group>
-                                </Col>
-                            </Form.Item>
-                            {/* đơn vị  */}
-                            <Form.Item
-                                label={
-                                    <div className="flex flex-row gap-2">
-                                        <img src={ic_geo} />
-                                        <span className="text-[14px] font-bold leading-[24px]">Đơn vị</span>
-                                    </div>
-                                }>
-                                <TreeSelect
-                                    multiple
-                                    showCheckedStrategy="SHOW_ALL"
-                                    treeCheckable
-                                    size="small"
-                                    showSearch
-                                    filterTreeNode={(input: any, treeNode: any) => {
-                                        return (
-                                            treeNode.title.toLowerCase().indexOf(input.toLowerCase()) >= 0
-                                        );
-                                    }}
-                                    className="-mt-3"
-                                    style={{ width: "100%" }}
-                                    placeholder="Chọn đơn vị"
-                                    allowClear
-                                    treeDefaultExpandAll
-                                    // treeData={organizationTree}
-                                    treeData={listToTree(arrayToTree([...organizations], { dataField: null }))}
-                                    onChange={(checkedValues) => {
-                                        form.setFieldsValue({ org_id: checkedValues });
-                                        formValueChange();
-                                    }}
-                                />
-                            </Form.Item>
+            <div className="flex gap-4 p-4" style={{ height: `calc(100% - ${LayoutSpace.TabMargin}px)`, }}>
 
-                            {/* vị trí ==> tương tự như là đơn vị */}
-                            <Form.Item
-                                label={
-                                    <div className="flex flex-row gap-2">
-                                        <img src={ic_geo} />
-                                        <span className="text-[14px] font-bold leading-[24px]">Vị ví</span>
-                                    </div>
-                                }>
-                                <TreeSelect
-                                    multiple
-                                    showCheckedStrategy="SHOW_ALL"
-                                    treeCheckable
-                                    size="small"
-                                    showSearch
-                                    filterTreeNode={(input: any, treeNode: any) => {
-                                        return (
-                                            treeNode.title.toLowerCase().indexOf(input.toLowerCase()) >= 0
-                                        );
-                                    }}
-                                    className="-mt-3"
-                                    style={{ width: "100%" }}
-                                    placeholder="Chọn vị trí hiện tại"
-                                    allowClear
-                                    treeDefaultExpandAll
-                                    // treeData={organizationTree}
-                                    treeData={listToTree(arrayToTree([...organizations], { dataField: null }))}
-                                    onChange={(checkedValues) => {
-                                        form.setFieldsValue({place_id: checkedValues });
-                                        formValueChange();
-                                    }}
-                                />
-
-                            </Form.Item>
-                            {/* chủng loại => định dạng select */}
-                            <Form.Item
-                                label={
-                                    <div className="flex flex-row gap-2">
-                                        <img src={ic_geo} />
-                                        <span className="text-[14px] font-bold leading-[24px]">chủng loại</span>
-                                    </div>
-                                }>
-                                <Select
-                                    className="flex border-0 w-full"
-                                    allowClear
-                                    placeholder="Chọn chủng loại"
-                                    options={commonCategories.species}
-                                    showSearch
-                                    filterOption={(input: string, option: any) => {
-                                        return (option?.label ?? "").toLowerCase().includes(input.toLowerCase());
-                                    }}
-                                    onChange={(checkedValues) => {
-                                        form.setFieldsValue({ species_id: checkedValues });
-                                        formValueChange();
-                                        console.log("kiem tra", checkedValues)
-                                    }}
-
-                                />
-                            </Form.Item>
-                            {/* nhóm trang thiết bị */}
-                            <Form.Item
-                                label={
-                                    <div className="flex flex-row gap-2">
-                                        <img src={ic_geo} />
-                                        <span className="text-[14px] font-bold leading-[24px]">Nhóm</span>
-                                    </div>
-                                }>
-                                <Select
-                                    className="flex border-0 w-full"
-                                    allowClear
-                                    placeholder="Chọn nhóm TBKT"
-                                    options={commonCategories.group}
-                                    showSearch
-                                    filterOption={(input: string, option: any) => {
-                                        return (option?.label ?? "").toLowerCase().includes(input.toLowerCase());
-                                    }}
-                                    onChange={(checkedValues) => {
-                                        form.setFieldsValue({ group_id: checkedValues });
-                                        formValueChange();
-                                    }}
-                                />
-                            </Form.Item>
-                        </Form>
-                    </div>
-                </div>
                 {/* max-w-[870px]==> để chỉnh sửa kích thước */}
                 <div className=" flex flex-col w-full min-w-0  overflow-hidden">
                     <div className="flex flex-row pb-2 items-center justify-between">
                         {/* <div className="flex flex-row  items-center "> */}
 
-                        <div className="text-nowrap text-base font-medium leading-[26px]">{`Danh sách trang thiết bị ${renderOrganizationName(title)}`}</div>
+                        <div className="text-nowrap text-base font-medium leading-[26px]">{`Danh sách cán bộ ${renderOrganizationName(title)}`}</div>
                         {/* <div className="flex flex-row items-center min-w-200 gap-2"> */}
                         <div className="flex flex-row items-center min-w-200 gap-2">
 
@@ -649,35 +459,68 @@ const TTBManagement: React.FC = () => {
                             </Button>
                         </div>
                     </div>
-                    <BaseTable
-                        loading={isLoading}
-                        columns={columns}
-                        dataSource={datasource}
-                        setPagination={setPagination}
-                        rowKey={"id"}
-                        actionClick={handleActions}
+                    <Row>
+                        <Col span={14} push={10}>
+                            <BaseTable
+                                loading={isLoading}
+                                columns={columns}
+                                dataSource={datasource}
+                                setPagination={setPagination}
+                                rowKey={"id"}
+                                actionClick={handleActions}
 
 
-                        x={2500}
+                                x={2500}
 
 
 
-                        onChange={({ current, pageSize }: any) => {
-                            setPagination({ page: current, pageSize });
-                            fetchData(current, pageSize, filter);
-                        }}
-                        paginationCustom={
-                            {
-                                current: pagination.page,
-                                pageSize: pagination.pageSize,
-                                total: meta?.count || 0
-                            }
-                        }
-                    />
+                                onChange={({ current, pageSize }: any) => {
+                                    setPagination({ page: current, pageSize });
+                                    fetchData(current, pageSize, filter);
+                                }}
+                                paginationCustom={
+                                    {
+                                        current: pagination.page,
+                                        pageSize: pagination.pageSize,
+                                        total: meta?.count || 0
+                                    }
+                                }
+                            />
+                        </Col>
+                        <Col span={10} pull={14}  style={{ paddingLeft: '16px' }}>
+                            <BaseTable
+                                loading={isLoading}
+                                columns={columns}
+                                dataSource={datasource}
+                                setPagination={setPagination}
+                                rowKey={"id"}
+                                actionClick={handleActions}
+
+
+                                x={2500}
+
+
+
+                                onChange={({ current, pageSize }: any) => {
+                                    setPagination({ page: current, pageSize });
+                                    fetchData(current, pageSize, filter);
+                                }}
+                                paginationCustom={
+                                    {
+                                        current: pagination.page,
+                                        pageSize: pagination.pageSize,
+                                        total: meta?.count || 0
+                                    }
+                                }
+                            />
+                        </Col>
+                    </Row>
+
+
                 </div>
             </div>
 
         </div>
     );
 };
-export default TTBManagement;
+export default In_OutManagement;

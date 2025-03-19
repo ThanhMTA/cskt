@@ -11,6 +11,7 @@ import ActivityManagement from "../components/Activity";
 import AccountManagement from "../components/Account";
 import FailureManagement from "../components/Failure";
 import TTBManagement from "../components/QLTTB";
+import In_OutManagement from "../components/In_out";
 
 export default function TestManagement() {
     const navigate = useNavigate();
@@ -36,6 +37,14 @@ export default function TestManagement() {
             label: "Quản lý sự cố",
             children: <div className="bg-[#F5F5F6] h-svh">
                 <FailureManagement />
+            </div>,
+            icon: <HistoryOutlined/>,
+        },
+        {
+            key: SystemType.Input_Output, 
+            label: "Quản lý nhập xuất",
+            children: <div className="bg-[#F5F5F6] h-svh">
+                <In_OutManagement/>
             </div>,
             icon: <HistoryOutlined/>,
         },
