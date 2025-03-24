@@ -50,7 +50,6 @@ export default function TTBAction({ id, action }: Props) {
     const [detail, setDetail] = useState<TTBData>();
     const [dataSelection, setDataSelection] = useState<ICommonCategory>({
 
-
         condition: [],
         org: [],
         species: [],

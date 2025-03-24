@@ -20,8 +20,11 @@ import { useModal } from "@app/contexts/ModalContext";
 // import TTBAction from "./QLTTBModal";
 import { ic_geo } from "@app/assets/svg";
 import { group } from "console";
-import TTBAction from "./QLTTBModal";
+// import TTBAction from "./QLTTBModal";
+import In_OutCreate from "./in_outModal";
 import { TTBData } from "../types/TTB.type";
+import { getHandover, metaHandover } from "../stores/In_out.action";
+import { handoverData } from "../types/handover.type";
 
 export const ACTION_TABLE: ITableAction[] = [];
 const COLOR_RANGE: any = {
@@ -42,6 +45,8 @@ const In_OutManagement: React.FC = () => {
     const [form] = Form.useForm();
     const { openModal } = useModal();
     const [meta, setMeta] = useState<IMeta>({ count: 0 });
+    const [meta1, setMeta1] = useState<IMeta>({ count: 0 });
+
     const [filter, setFilter] = useState<any>({});
     const [title, setTitle] = useState<string | null>(null)
     const [open, setOpen] = useState(true);
@@ -50,6 +55,7 @@ const In_OutManagement: React.FC = () => {
     const [places, setPlaces] = useState<any>([]);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [datasource, setDatasource] = useState<PersonalIdentify[]>([])
+    const [datasource1, setDatasource1] = useState<PersonalIdentify[]>([])
     const [pagination, setPagination] = useState<{ page: number, pageSize: number }>({ page: 1, pageSize: DEFAULT_PAGESIZE });
     const toggleOpen = () => {
         setOpen(!open);
@@ -130,35 +136,12 @@ const In_OutManagement: React.FC = () => {
                 render: (value: any, record: any) => record?.species_id?.name ?? '',
             },
             {
-                title: "Nhóm trang thiết bị",
+                title: "Nhóm TTB",
                 dataIndex: "group_id",
                 key: "group_id",
                 render: (value: any, record: any) => record?.group_id?.name ?? '',
             },
-            {
-                title: "Nguồn đầu tư",
-                dataIndex: "investor_id",
-                key: "investor_id",
-                render: (value: any, record: any) => record?.investor_id?.name ?? '',
-            },
-            {
-                title: "Hãng sản xuất",
-                dataIndex: "manufacturer_id",
-                key: "manufacturer_id",
-                render: (value: any, record: any) => record?.manufacturer_id?.name ?? '',
-            },
-            {
-                title: "Người quản lý",
-                dataIndex: "manager_id",
-                key: "manager_id",
-                render: (value: any, record: any) => record?.manager_id?.name ?? '',
-            },
-            {
-                title: "Vị trí hiện tại",
-                dataIndex: "place_id",
-                key: "place_id",
-                render: (value: any, record: any) => record?.place_id?.name ?? '',
-            },
+
             {
 
                 title: "Trạng thái",
@@ -169,19 +152,80 @@ const In_OutManagement: React.FC = () => {
             },
         ];
     }, []);
+    const columns1: any[] = useMemo(() => {
+        return [
+            {
+                title: "Mã biên bản",
+                dataIndex: "code",
+                fixed: 'left',
+                key: TableGeneralKeys.Name,
+                render: (value: string, record: any) => {
+                    console.log('record: ', record)
+                    return (
+                        <span
+                            className="font-semibold text-sm cursor-pointer text-[#3D73D0]"
+                            onClick={() => handleActions(Action.View, record)}
+                        >
+                            {value ?? ""}
+                        </span>
+                    );
+                },
+            },
+            // {
+            //     title: "Thời gian",
+            //     dataIndex: "time",
+            //     key: "time",
+            //     // render: (value: any, record: any) => recor ? dayjs(record?.personal_id?.birthday).format('DD/MM/YYYY') : ''
+                
+            //     render: (value: any) => {
+            //         return value
+            //     },
+            //     //     width:150
+
+            // },
+            {
+                title: "Thời gian",
+                dataIndex: "time",
+                key: "time",
+                render: (value: any) => {
+                  if (!value) return "";
+                  const date = new Date(value);
+                  const year = date.getFullYear();
+                  const month = String(date.getMonth() + 1).padStart(2, "0");
+                  const day = String(date.getDate()).padStart(2, "0");
+                  const hours = String(date.getHours()).padStart(2, "0");
+                  const minutes = String(date.getMinutes()).padStart(2, "0");
+                  const seconds = String(date.getSeconds()).padStart(2, "0");
+              
+                  return `${day}-${month}-${year} /${hours}:${minutes}:${seconds}`;
+                },
+              },
+              
+            {
+                title: "Giao/nhận",
+                dataIndex: "type_handover",
+                key: "  type_handover",
+                render: (value: any) => {
+                    return value
+                },
+            },
+
+        ];
+    }, []);
+
 
     const handleActions = (key: Action, item: TTBData) => {
         switch (key) {
             case Action.View:
                 openModal(
-                    <TTBAction id={item.id} action={Action.View} />,
+                    <In_OutCreate detail={item} action={Action.View} />,
                     {
                         width: '50vw',
                         onModalClose(res) {
                             if (res?.success) {
                                 if (res?.success) {
                                     openModal(
-                                        <TTBAction id={item.id} action={Action.Update} />,
+                                        <In_OutCreate detail={item} action={Action.Update} />,
                                         {
                                             width: '50vw',
                                             onModalClose() {
@@ -199,7 +243,7 @@ const In_OutManagement: React.FC = () => {
                 break;
             case Action.Create:
                 openModal(
-                    <TTBAction action={Action.Create} />,
+                    <In_OutCreate action={Action.Create} />,
                     {
                         width: '50vw',
                         onModalClose(res) {
@@ -228,30 +272,6 @@ const In_OutManagement: React.FC = () => {
     ) => {
         setIsLoading(true);
         try {
-            // let init_filter = {};
-            // switch (userInfo?.role?.name) {
-            //     case Role.ADMIN:
-            //         init_filter = {
-            //             status: {
-            //                 _in: [StatusUser.active, StatusUser.draft]
-            //             }
-            //         };
-            //         break;
-            //     default:
-            //         init_filter = {
-            //             status: {
-            //                 _in: [StatusUser.active]
-            //             }
-            //         };
-            //         break;
-            // }
-            // if (Object.keys(filter).length !== 0) {
-            //     init_filter = {
-            //         personal_id: filter,
-            //         ...init_filter
-            //     }
-            // }
-            // const res = await Promise.all([getTTB({ limit: pageSize, page }, filter), metaCanBo(filter)]);
 
             const response: any = await Promise.all([
                 getOrganizationTree(),
@@ -262,18 +282,26 @@ const In_OutManagement: React.FC = () => {
                 // getCommonCategory('vi_tri'),
                 // getPlaceTree()
             ]);
-            const res = await Promise.all([getTTB({ limit: pageSize, page }, filter), metaTTB(filter)]);
+            const res = await Promise.all([
+                getTTB({ limit: pageSize, page }, filter),
+                metaTTB(filter),
+                getHandover({ limit: pageSize, page }, filter),
+                metaHandover(filter),
+
+            ]);
 
             setOrganizations(response[0]);
             setMeta(res[1]);
-            setDatasource(res[0])
+            setDatasource(res[0]);
+            setMeta1(res[3]);
+            setDatasource1(res[2]);
             setCommonCategories({
                 species: response[1],
                 group: response[2],
                 // role: role
             })
             // setPlaces(response[3])
-            // console.log('data: ', response[3])
+            console.log('kiem tra: ', res[2])
 
         } catch (error) {
             console.log('error: ', error)
@@ -385,11 +413,11 @@ const In_OutManagement: React.FC = () => {
     };
     const ManagementOptions: any = [
         {
-            title: "Ban truyền dẫn quang",
+            title: "Giao",
             key: "TQD",
         },
         {
-            title: "Ban Visat",
+            title: "Nhận",
             key: "visat",
         },
 
@@ -417,12 +445,40 @@ const In_OutManagement: React.FC = () => {
                 <div className=" flex flex-col w-full min-w-0  overflow-hidden">
                     <div className="flex flex-row pb-2 items-center justify-between">
                         {/* <div className="flex flex-row  items-center "> */}
+                        {/* <div className="text-nowrap text-base font-medium leading-[26px]">{`Danh sách cán bộ ${renderOrganizationName(title)}`}</div> */}
+                        <DatePicker.RangePicker
+                            size="small"
 
-                        <div className="text-nowrap text-base font-medium leading-[26px]">{`Danh sách cán bộ ${renderOrganizationName(title)}`}</div>
+                        />
+                        <TreeSelect
+                            multiple
+                            showCheckedStrategy="SHOW_ALL"
+                            treeCheckable
+                            size="small"
+                            showSearch
+                            className="min-w-[200px] max-w-[300px]"
+                            filterTreeNode={(input: any, treeNode: any) => {
+                                return (
+                                    treeNode.title.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                                );
+                            }}
+                            // className="-mt-3"
+                            // style={{ width: "100%" }}
+                            placeholder="Chọn đơn vị"
+                            allowClear
+                            treeDefaultExpandAll
+                            // treeData={organizationTree}
+                            treeData={listToTree(arrayToTree([...organizations], { dataField: null }))}
+                            onChange={(checkedValues) => {
+                                form.setFieldsValue({ org_id: checkedValues });
+                                formValueChange();
+                            }}
+                        />
                         {/* <div className="flex flex-row items-center min-w-200 gap-2"> */}
                         <div className="flex flex-row items-center min-w-200 gap-2">
 
                             <Input
+                                size="small"
                                 className="rounded-full"
                                 placeholder="Nhập tên trang thiết bị"
                                 allowClear
@@ -442,25 +498,90 @@ const In_OutManagement: React.FC = () => {
                                 }}
                                 suffix={<SearchOutlined className="text-primary" />}
                             />
-                            <Button onClick={() => {
-                                openModal(
-                                    <TTBAction action={Action.Create} />,
-                                    {
-                                        width: '50vw',
-                                        onModalClose(res) {
-                                            if (res?.success) {
-                                                reloadData()
-                                            }
-                                        },
-                                    }
-                                )
-                            }} type="primary">
+                            <Button
+                                size="small"
+                                onClick={() => {
+                                    openModal(
+                                        <In_OutCreate action={Action.Create} />,
+                                        {
+                                            width: '80vw',
+                                            onModalClose(res) {
+                                                if (res?.success) {
+                                                    reloadData()
+                                                }
+                                            },
+                                        }
+                                    )
+                                }} type="primary">
                                 Thêm mới
                             </Button>
                         </div>
                     </div>
-                    <Row>
-                        <Col span={14} push={10}>
+
+                    <Splitter
+                        style={{
+                            height: 520,
+                            boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)',
+                        }}
+                    >
+                        <Splitter.Panel collapsible>
+                            <div className="flex flex-row flex-wrap items-center justify-between pb-2 gap-4">
+                                <div className="text-base font-medium leading-[26px] whitespace-nowrap">
+                                    {`Danh sách biên bản bàn giao ${renderOrganizationName(title)}`}
+                                </div>
+
+                                <Checkbox.Group
+                                    className="flex flex-row flex-wrap gap-4"
+                                    onChange={(checkedValues) => {
+                                        form.setFieldsValue({ level: checkedValues });
+                                        formValueChange();
+                                    }}
+                                >
+                                    {ManagementOptions?.map((value: { title: string; key: string }, index: number) => (
+                                        <Checkbox key={value.key} value={value.key}>
+                                            <span className="text-[14px] font-normal leading-[23px]">
+                                                {value.title}
+                                            </span>
+                                        </Checkbox>
+                                    ))}
+                                </Checkbox.Group>
+                            </div>
+                            <BaseTable
+                                loading={isLoading}
+                                columns={columns1}
+                                dataSource={datasource1}
+                                setPagination={setPagination}
+                                rowKey={"id"}
+                                actionClick={handleActions}
+
+
+                                x={800}
+
+
+
+                                onChange={({ current, pageSize }: any) => {
+                                    setPagination({ page: current, pageSize });
+                                    fetchData(current, pageSize, filter);
+                                }}
+                                paginationCustom={
+                                    {
+                                        current: pagination.page,
+                                        pageSize: pagination.pageSize,
+                                        total: meta1?.count || 0
+                                    }
+                                }
+                            />
+                        </Splitter.Panel>
+                        <Splitter.Panel
+                            collapsible={{
+                                start: true,
+                            }}
+                        >
+                            <div style={{ textAlign: 'center' }}>
+                                <div className="text-nowrap text-base font-medium leading-[26px]">
+                                    {`Danh sách trang bị nhận bàn giao ${renderOrganizationName(title)}`}
+                                </div>
+                            </div>
                             <BaseTable
                                 loading={isLoading}
                                 columns={columns}
@@ -470,7 +591,7 @@ const In_OutManagement: React.FC = () => {
                                 actionClick={handleActions}
 
 
-                                x={2500}
+                                x={1400}
 
 
 
@@ -486,8 +607,14 @@ const In_OutManagement: React.FC = () => {
                                     }
                                 }
                             />
-                        </Col>
-                        <Col span={10} pull={14}  style={{ paddingLeft: '16px' }}>
+                        </Splitter.Panel>
+                        <Splitter.Panel collapsible >
+                            <div style={{ textAlign: 'center' }}>
+                                <div className="text-nowrap text-base font-medium leading-[26px]">
+                                    {`Danh sách trang bị đã bàn giao ${renderOrganizationName(title)}`}
+                                </div>
+                            </div>
+
                             <BaseTable
                                 loading={isLoading}
                                 columns={columns}
@@ -497,7 +624,7 @@ const In_OutManagement: React.FC = () => {
                                 actionClick={handleActions}
 
 
-                                x={2500}
+                                x={1400}
 
 
 
@@ -513,8 +640,8 @@ const In_OutManagement: React.FC = () => {
                                     }
                                 }
                             />
-                        </Col>
-                    </Row>
+                        </Splitter.Panel>
+                    </Splitter>
 
 
                 </div>

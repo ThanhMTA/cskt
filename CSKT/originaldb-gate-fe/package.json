@@ -14,7 +14,7 @@
     "@directus/sdk": "^15.1.0",
     "@loadable/component": "^5.15.3",
     "@types/swagger-ui-react": "^4.18.3",
-    "antd": "^5.13.3",
+    "antd": "^5.24.4",
     "dayjs": "^1.11.10",
     "performant-array-to-tree": "^1.11.0",
     "postcss-antd-fixes": "^0.2.0",

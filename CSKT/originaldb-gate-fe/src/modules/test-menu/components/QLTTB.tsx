@@ -68,7 +68,7 @@ const TTBManagement: React.FC = () => {
                 fixed: 'left',
                 key: TableGeneralKeys.Name,
                 render: (value: string, record: any) => {
-                    console.log('record: ', record)
+                    // console.log('record: ', record)
                     return (
                         <span
                             className="font-semibold text-sm cursor-pointer text-[#3D73D0]"
@@ -288,10 +288,10 @@ const TTBManagement: React.FC = () => {
         }
         return ''
     }
-
     useEffect(() => {
         fetchData(pagination.page, pagination.pageSize, filter)
     }, [pagination, filter])
+
     const formValueChange = async () => {
         let filterValue: any = { _and: [] };
         let filterLevel: any = {};
