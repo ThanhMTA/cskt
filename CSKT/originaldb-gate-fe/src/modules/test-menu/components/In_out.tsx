@@ -23,7 +23,7 @@ import { group } from "console";
 // import TTBAction from "./QLTTBModal";
 import In_OutCreate from "./in_outModal";
 import { TTBData } from "../types/TTB.type";
-import { getHandover, metaHandover, getTTBHandoverReceived,getReceivedTTBList } from "../stores/In_out.action";
+import { getHandover, metaHandover,getReceivedTTBList, getHandoverList1 } from "../stores/In_out.action";
 import { handoverData } from "../types/handover.type";
 
 export const ACTION_TABLE: ITableAction[] = [];
@@ -55,7 +55,9 @@ const In_OutManagement: React.FC = () => {
     const [organizations, setOrganizations] = useState<any>([]);
     const [places, setPlaces] = useState<any>([]);
     const [isLoading, setIsLoading] = useState<boolean>(false);
-    const [datasource, setDatasource] = useState<PersonalIdentify[]>([])
+    const [datasource, setDatasource] = useState<any[]>([])
+    const [datasource2, setDatasource2] = useState<any[]>([])
+
     const [datasource1, setDatasource1] = useState<PersonalIdentify[]>([])
     const [pagination, setPagination] = useState<{ page: number, pageSize: number }>({ page: 1, pageSize: DEFAULT_PAGESIZE });
     const toggleOpen = () => {
@@ -74,14 +76,15 @@ const In_OutManagement: React.FC = () => {
                 dataIndex: "name",
                 fixed: 'left',
                 key: TableGeneralKeys.Name,
-                render: (value: string, record: any) => {
+                render: (value: any, record: any) => {
                     // console.log('record: ', record)
+                    // record?.id_tb?.name ?? ''
                     return (
                         <span
                             className="font-semibold text-sm cursor-pointer text-[#3D73D0]"
                             onClick={() => handleActions(Action.View, record)}
                         >
-                            {value ?? ""}
+                              {record?.id_tb?.name ?? ""}
                         </span>
                     );
                 },
@@ -90,59 +93,78 @@ const In_OutManagement: React.FC = () => {
                 title: "Ký hiệu",
                 dataIndex: "nick_name",
                 key: "nick_name",
-                render: (value: any) => {
-                    return value
-                },
+                render: (value: any, record: any) => record?.id_tb?.nick_name ?? '',
                 //     width:150
 
             },
             {
                 title: "serial number",
                 dataIndex: "serial_number",
-                render: (value: any) => {
-                    return value
-                },
+                render: (value: any, record: any) => record?.id_tb?.serial_number ?? '',
             },
             {
                 title: "Đơn vị tính",
                 dataIndex: "unit_id",
                 key: "unit_id",
-                render: (value: any, record: any) => record?.unit_id?.name ?? '',
+                render: (value: any, record: any) => record?.id_tb?.unit_id?.name?? '',
             },
             {
                 title: "Đơn vị biên chế",
                 dataIndex: "org_id",
                 key: "org_id",
-                render: (value: any, record: any) => record?.org_id?.name ?? '',
+                render: (value: any, record: any) => record?.id_tb?.org_id?.name ?? '',
             },
             {
                 title: "số lượng",
                 dataIndex: "quantity",
                 key: "quantity",
-                render: (value: any) => {
-                    return value
-                },
+                render: (value: any, record: any) => record?.id_tb?.quantity ?? '',
+               
 
             },
             {
                 title: "Tình trạng",
                 dataIndex: "condition_id",
                 key: "condition_id",
-                render: (value: any, record: any) => record?.condition_id?.name ?? '',
+                render: (value: any, record: any) => record?.id_tb?.condition_id?.name ?? '',
             },
             {
                 title: "Chủng loại",
                 dataIndex: "species_id",
                 key: "species_id",
-                render: (value: any, record: any) => record?.species_id?.name ?? '',
+                render: (value: any, record: any) => record?.id_tb?.species_id?.name ?? '',
             },
             {
                 title: "Nhóm TTB",
                 dataIndex: "group_id",
                 key: "group_id",
-                render: (value: any, record: any) => record?.group_id?.name ?? '',
+                render: (value: any, record: any) => record?.id_tb?.group_id?.name ?? '',
             },
+            {
+                title: "Thời gian",
+                dataIndex: "time",
+                key: "time",
+                render: (value: any,record: any) => {
+                    if (!record||!record.id_handover) return "";
+                    const date = new Date(record.id_handover.time);
+                    const year = date.getFullYear();
+                    const month = String(date.getMonth() + 1).padStart(2, "0");
+                    const day = String(date.getDate()).padStart(2, "0");
+                    const hours = String(date.getHours()).padStart(2, "0");
+                    const minutes = String(date.getMinutes()).padStart(2, "0");
+                    const seconds = String(date.getSeconds()).padStart(2, "0");
 
+                    return `${day}-${month}-${year} /${hours}:${minutes}:${seconds}`;
+                },
+            },
+            {
+                title: "id_handover",
+                dataIndex: "id_handover",
+                key: "id_handover",
+                render: (value: any) => {
+                    return value
+                },
+            },
             {
 
                 title: "Trạng thái",
@@ -290,28 +312,35 @@ const In_OutManagement: React.FC = () => {
                 
             ]);
             const res = await Promise.all([
-                getTTB({ limit: pageSize, page }, filter),
-                metaTTB(filter),
+                // getTTB({ limit: pageSize, page }, filter),
+                getHandoverList1({ limit: pageSize, page }, filter,"Nhận"),
+                
+                // metaTTB(filter),
+                metaHandover(filterHandover),
                 getHandover({ limit: pageSize, page }, filterHandover),
                 metaHandover(filterHandover),
-                getReceivedTTBList()
+                // getReceivedTTBList({ limit: pageSize, page }, filter),
+                getHandoverList1({ limit: pageSize, page }, filter,"Giao"),
+               
+
 
             ]);
 
             setOrganizations(response[0]);
             setMeta(res[1]);
             // setDatasource(res[0]);
-            setDatasource(res[4]);
-
+            setDatasource(res[0]);
             setMeta1(res[3]);
             setDatasource1(res[2]);
+            setDatasource2(res[4]);
+
             setCommonCategories({
                 species: response[1],
                 group: response[2],
                 // role: role
             })
             // setPlaces(response[3])
-            console.log('kiem tra: ', res[4])
+            // console.log('kiem tra: ', res[4])
 
         } catch (error) {
             console.log('error: ', error)
@@ -391,7 +420,20 @@ const In_OutManagement: React.FC = () => {
                 ],
             };
         }
-
+        if (form.getFieldValue('time')?.length === 2) {
+            const [startTime, endTime] = form.getFieldValue('time');
+            filterValue = {
+                _and: [
+                    ...filterValue._and,
+                    {
+                        time: {
+                            _gte: startTime,
+                            _lte: endTime,
+                        }
+                    },
+                ],
+            };
+        }
         setFilter(filterValue);
 
     };
@@ -413,32 +455,24 @@ const In_OutManagement: React.FC = () => {
             };
         }
 
-
-        if (form.getFieldValue('org_delivery_id')?.length) {
+        if (form.getFieldValue('org_delivery_id')?.length || form.getFieldValue('org_receive_id')?.length) {
             filterValue = {
                 _and: [
                     ...filterValue._and,
                     {
-                        org_delivery_id: {
-                            _in: form.getFieldValue('org_delivery_id'),
-                        }
+                        _or: [
+                            form.getFieldValue('org_delivery_id')?.length
+                                ? { org_delivery_id: { _in: form.getFieldValue('org_delivery_id') } }
+                                : null,
+                            form.getFieldValue('org_receive_id')?.length
+                                ? { org_receive_id: { _in: form.getFieldValue('org_receive_id') } }
+                                : null,
+                        ].filter(Boolean), // Loại bỏ `null` nếu một trong hai không có giá trị
                     },
                 ],
             };
         }
-
-        // if (form.getFieldValue('org_id')?.length) {
-        //     filterHandoverValue = {
-        //         _and: [
-        //             ...filterValue._and,
-        //             {
-        //                 org_receive_id: {
-        //                     _in: form.getFieldValue('org_id'),
-        //                 }
-        //             },
-        //         ],
-        //     };
-        // }
+        
         if (form.getFieldValue('time')?.length === 2) {
             const [startTime, endTime] = form.getFieldValue('time');
             filterValue = {
@@ -504,7 +538,17 @@ const In_OutManagement: React.FC = () => {
                                 } else {
                                     form.setFieldsValue({ time: null });
                                 }
+                                // formValueChange();
+
                                 formValueChange1();
+                                if (dates && dates.length === 2 && dates[0] && dates[1]) {
+                                    form.setFieldsValue({
+                                        time: [dates[0].startOf('day'), dates[1].endOf('day')]
+                                    });
+                                } else {
+                                    form.setFieldsValue({ time: null });
+                                }
+                                formValueChange();
                             }}
                         />
 
@@ -536,10 +580,16 @@ const In_OutManagement: React.FC = () => {
                                 });
                                 formValueChange();
                                 form.setFieldsValue({
+                                    // org_id: checkedValues,
                                     org_delivery_id: checkedValues,
                                     org_receive_id: checkedValues,
                                 });
                                 formValueChange1();
+                         
+                          
+                              
+                            
+
                             }}
                             // onSelect={() => {
                             //     // Cập nhật org_delivery_id và org_receive_id, gọi formValueChange1()
@@ -698,7 +748,7 @@ const In_OutManagement: React.FC = () => {
                             <BaseTable
                                 loading={isLoading}
                                 columns={columns}
-                                dataSource={datasource}
+                                dataSource={datasource2}
                                 setPagination={setPagination}
                                 rowKey={"id"}
                                 actionClick={handleActions}
