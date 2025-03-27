@@ -443,7 +443,7 @@ const In_OutCreate: React.FC<FailureCreateType> = ({
             </Form.Item>
             <Form.Item
               className="mb-4"
-              name={"code"}
+              name={"name"}
               label={
                 <div className="flex text-[15px] justify-items-start gap-x-1">
                   Mã biên bản
@@ -455,13 +455,13 @@ const In_OutCreate: React.FC<FailureCreateType> = ({
                 
               ) : (
                 <p className="px-[12px] text-[15px]">
-                  {form.getFieldValue("code") || ""}
+                  {form.getFieldValue("name") || ""}
                 </p>
               )}
             </Form.Item>
             <Form.Item
               className="mb-4"
-              name={"ord_receive_id"}
+              name={"org_receive_id"}
               label={
                 <div className="flex text-[15px] justify-items-start gap-x-1">
                   Đơn vị nhận
@@ -492,7 +492,7 @@ const In_OutCreate: React.FC<FailureCreateType> = ({
                   // treeData={organizationTree}
                   treeData={listToTree(arrayToTree([...organizations], { dataField: null }))}
                 onChange={(checkedValues) => {
-                   form.setFieldsValue({ ord_receive_id: checkedValues[0] });
+                   form.setFieldsValue({ org_receive_id: checkedValues[0] });
                   if (checkedValues?.length > 0) {
                     // ví dụ lấy cái đầu tiên
                     getCanBo(checkedValues)
@@ -510,7 +510,7 @@ const In_OutCreate: React.FC<FailureCreateType> = ({
                 />
               ) : (
                 <p className="px-[12px] text-[15px]">
-                  {form.getFieldValue("ord_receive_id") || ""}
+                  {form.getFieldValue("org_receive_id") || ""}
                 </p>
               )}
             </Form.Item>

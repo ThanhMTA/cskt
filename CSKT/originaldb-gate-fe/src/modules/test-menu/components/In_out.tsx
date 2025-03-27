@@ -23,7 +23,7 @@ import { group } from "console";
 // import TTBAction from "./QLTTBModal";
 import In_OutCreate from "./in_outModal";
 import { TTBData } from "../types/TTB.type";
-import { getHandover, metaHandover } from "../stores/In_out.action";
+import { getHandover, metaHandover, getTTBHandoverReceived,getReceivedTTBList } from "../stores/In_out.action";
 import { handoverData } from "../types/handover.type";
 
 export const ACTION_TABLE: ITableAction[] = [];
@@ -48,6 +48,7 @@ const In_OutManagement: React.FC = () => {
     const [meta1, setMeta1] = useState<IMeta>({ count: 0 });
 
     const [filter, setFilter] = useState<any>({});
+    const [filterHandover, setFilterHandover] = useState<any>({});
     const [title, setTitle] = useState<string | null>(null)
     const [open, setOpen] = useState(true);
     const { userInfo } = userStore()
@@ -74,7 +75,7 @@ const In_OutManagement: React.FC = () => {
                 fixed: 'left',
                 key: TableGeneralKeys.Name,
                 render: (value: string, record: any) => {
-                    console.log('record: ', record)
+                    // console.log('record: ', record)
                     return (
                         <span
                             className="font-semibold text-sm cursor-pointer text-[#3D73D0]"
@@ -156,7 +157,7 @@ const In_OutManagement: React.FC = () => {
         return [
             {
                 title: "Mã biên bản",
-                dataIndex: "code",
+                dataIndex: "name",
                 fixed: 'left',
                 key: TableGeneralKeys.Name,
                 render: (value: string, record: any) => {
@@ -171,43 +172,45 @@ const In_OutManagement: React.FC = () => {
                     );
                 },
             },
-            // {
-            //     title: "Thời gian",
-            //     dataIndex: "time",
-            //     key: "time",
-            //     // render: (value: any, record: any) => recor ? dayjs(record?.personal_id?.birthday).format('DD/MM/YYYY') : ''
-                
-            //     render: (value: any) => {
-            //         return value
-            //     },
-            //     //     width:150
 
-            // },
             {
                 title: "Thời gian",
                 dataIndex: "time",
                 key: "time",
                 render: (value: any) => {
-                  if (!value) return "";
-                  const date = new Date(value);
-                  const year = date.getFullYear();
-                  const month = String(date.getMonth() + 1).padStart(2, "0");
-                  const day = String(date.getDate()).padStart(2, "0");
-                  const hours = String(date.getHours()).padStart(2, "0");
-                  const minutes = String(date.getMinutes()).padStart(2, "0");
-                  const seconds = String(date.getSeconds()).padStart(2, "0");
-              
-                  return `${day}-${month}-${year} /${hours}:${minutes}:${seconds}`;
+                    if (!value) return "";
+                    const date = new Date(value);
+                    const year = date.getFullYear();
+                    const month = String(date.getMonth() + 1).padStart(2, "0");
+                    const day = String(date.getDate()).padStart(2, "0");
+                    const hours = String(date.getHours()).padStart(2, "0");
+                    const minutes = String(date.getMinutes()).padStart(2, "0");
+                    const seconds = String(date.getSeconds()).padStart(2, "0");
+
+                    return `${day}-${month}-${year} /${hours}:${minutes}:${seconds}`;
                 },
-              },
-              
+            },
+
             {
-                title: "Giao/nhận",
+                title: "Giao/Nhận",
                 dataIndex: "type_handover",
                 key: "  type_handover",
                 render: (value: any) => {
                     return value
                 },
+            },
+            {
+                title: "Đơn vị nhận",
+                dataIndex: "org_receive_id",
+                key: "org_receive_id",
+                render: (value: any, record: any) => record?.org_receive_id?.name ?? '',
+            },
+            {
+                title: "Đơn vị giao",
+                dataIndex: "org_delivery_id",
+                key: "org_delivery_id",
+                render: (value: any, record: any) => record?.org_delivery_id?.name ?? '',
+
             },
 
         ];
@@ -259,7 +262,7 @@ const In_OutManagement: React.FC = () => {
 
     const reloadData = async () => {
         try {
-            fetchData(pagination.page, pagination.pageSize, filter)
+            fetchData(pagination.page, pagination.pageSize, filter, filterHandover)
         } catch (error: any) {
             console.log('error: ', error)
         }
@@ -268,7 +271,8 @@ const In_OutManagement: React.FC = () => {
     const fetchData = async (
         page: number,
         pageSize: number,
-        filter: any
+        filter: any,
+        filterHandover: any,
     ) => {
         setIsLoading(true);
         try {
@@ -281,18 +285,24 @@ const In_OutManagement: React.FC = () => {
                 getCommonCategory('nhom_TBKT'),
                 // getCommonCategory('vi_tri'),
                 // getPlaceTree()
+                // getTTBHandoverReceived({ limit: pageSize, page }, filter),
+
+                
             ]);
             const res = await Promise.all([
                 getTTB({ limit: pageSize, page }, filter),
                 metaTTB(filter),
-                getHandover({ limit: pageSize, page }, filter),
-                metaHandover(filter),
+                getHandover({ limit: pageSize, page }, filterHandover),
+                metaHandover(filterHandover),
+                getReceivedTTBList()
 
             ]);
 
             setOrganizations(response[0]);
             setMeta(res[1]);
-            setDatasource(res[0]);
+            // setDatasource(res[0]);
+            setDatasource(res[4]);
+
             setMeta1(res[3]);
             setDatasource1(res[2]);
             setCommonCategories({
@@ -301,7 +311,7 @@ const In_OutManagement: React.FC = () => {
                 // role: role
             })
             // setPlaces(response[3])
-            console.log('kiem tra: ', res[2])
+            console.log('kiem tra: ', res[4])
 
         } catch (error) {
             console.log('error: ', error)
@@ -318,18 +328,11 @@ const In_OutManagement: React.FC = () => {
     }
 
     useEffect(() => {
-        fetchData(pagination.page, pagination.pageSize, filter)
-    }, [pagination, filter])
+        fetchData(pagination.page, pagination.pageSize, filter, filterHandover)
+    }, [pagination, filter, filterHandover])
     const formValueChange = async () => {
         let filterValue: any = { _and: [] };
-        let filterLevel: any = {};
-        if (form.getFieldValue('level')?.length) {
-            filterLevel = {
-                level: {
-                    _in: form.getFieldValue('level'),
-                }
-            };
-        }
+
         if (form.getFieldValue('geo')?.length) {
             filterValue = {
                 _and: [
@@ -348,18 +351,7 @@ const In_OutManagement: React.FC = () => {
                 ],
             };
         }
-        if (form.getFieldValue('group_id')?.length) {
-            filterValue = {
-                _and: [
-                    ...filterValue._and,
-                    {
-                        group_id: {
-                            _in: form.getFieldValue('group_id'),
-                        }
-                    },
-                ],
-            };
-        }
+
         if (form.getFieldValue('species_id')?.length) {
             filterValue = {
                 _and: [
@@ -384,18 +376,9 @@ const In_OutManagement: React.FC = () => {
                 ],
             };
         }
-        if (form.getFieldValue('place_id')?.length) {
-            filterValue = {
-                _and: [
-                    ...filterValue._and,
-                    {
-                        place_id: {
-                            _in: form.getFieldValue('place_id'),
-                        }
-                    },
-                ],
-            };
-        }
+
+
+
         if (form.getFieldValue('search')?.length) {
             filterValue = {
                 _and: [
@@ -408,31 +391,96 @@ const In_OutManagement: React.FC = () => {
                 ],
             };
         }
+
         setFilter(filterValue);
-        setFilterLevel(filterLevel)
+
+    };
+    const formValueChange1 = async () => {
+        let filterValue: any = { _and: [] };
+        // let filterHandoverValue: any = {};
+
+
+        if (form.getFieldValue('type_handover')?.length) {
+            filterValue = {
+                _and: [
+                    ...filterValue._and,
+                    {
+                        type_handover: {
+                            _in: form.getFieldValue('type_handover'),
+                        }
+                    },
+                ],
+            };
+        }
+
+
+        if (form.getFieldValue('org_delivery_id')?.length) {
+            filterValue = {
+                _and: [
+                    ...filterValue._and,
+                    {
+                        org_delivery_id: {
+                            _in: form.getFieldValue('org_delivery_id'),
+                        }
+                    },
+                ],
+            };
+        }
+
+        // if (form.getFieldValue('org_id')?.length) {
+        //     filterHandoverValue = {
+        //         _and: [
+        //             ...filterValue._and,
+        //             {
+        //                 org_receive_id: {
+        //                     _in: form.getFieldValue('org_id'),
+        //                 }
+        //             },
+        //         ],
+        //     };
+        // }
+        if (form.getFieldValue('time')?.length === 2) {
+            const [startTime, endTime] = form.getFieldValue('time');
+            filterValue = {
+                _and: [
+                    ...filterValue._and,
+                    {
+                        time: {
+                            _gte: startTime,
+                            _lte: endTime,
+                        }
+                    },
+                ],
+            };
+        }
+
+        if (form.getFieldValue('search')?.length) {
+            filterValue = {
+                _and: [
+                    ...filterValue._and,
+                    {
+                        name: {
+                            _icontains: form.getFieldValue('search').trim(),
+                        }
+                    },
+                ],
+            };
+        }
+        // setFilter(filterValue);
+        setFilterHandover(filterValue)
     };
     const ManagementOptions: any = [
         {
             title: "Giao",
-            key: "TQD",
+            key: "Giao",
         },
         {
             title: "Nhận",
-            key: "visat",
+            key: "Nhận",
         },
 
     ];
-    const In_OutOptions: any = [
-        {
-            title: "Nhận trang thiết bị",
-            key: "in",
-        },
-        {
-            title: "Bàn giao trang thiết bị",
-            key: "out",
-        },
 
-    ];
     return (
         <div
             // thêm w-[1180px] để sửa lại kích thước của phần nội dung, p-3 để cách lề dưới
@@ -448,8 +496,19 @@ const In_OutManagement: React.FC = () => {
                         {/* <div className="text-nowrap text-base font-medium leading-[26px]">{`Danh sách cán bộ ${renderOrganizationName(title)}`}</div> */}
                         <DatePicker.RangePicker
                             size="small"
-
+                            onChange={(dates) => {
+                                if (dates && dates.length === 2 && dates[0] && dates[1]) {
+                                    form.setFieldsValue({
+                                        time: [dates[0].startOf('day'), dates[1].endOf('day')]
+                                    });
+                                } else {
+                                    form.setFieldsValue({ time: null });
+                                }
+                                formValueChange1();
+                            }}
                         />
+
+
                         <TreeSelect
                             multiple
                             showCheckedStrategy="SHOW_ALL"
@@ -470,13 +529,29 @@ const In_OutManagement: React.FC = () => {
                             // treeData={organizationTree}
                             treeData={listToTree(arrayToTree([...organizations], { dataField: null }))}
                             onChange={(checkedValues) => {
-                                form.setFieldsValue({ org_id: checkedValues });
+                                form.setFieldsValue({
+                                    org_id: checkedValues,
+                                    // org_delivery_id: checkedValues,
+                                    // org_receive_id: checkedValues,
+                                });
                                 formValueChange();
+                                form.setFieldsValue({
+                                    org_delivery_id: checkedValues,
+                                    org_receive_id: checkedValues,
+                                });
+                                formValueChange1();
                             }}
+                            // onSelect={() => {
+                            //     // Cập nhật org_delivery_id và org_receive_id, gọi formValueChange1()
+                            //     form.setFieldsValue({
+                            //         org_delivery_id: form.getFieldValue('org_id'),
+                            //         org_receive_id: form.getFieldValue('org_id'),
+                            //     });
+                            //     formValueChange1();
+                            // }}
                         />
                         {/* <div className="flex flex-row items-center min-w-200 gap-2"> */}
                         <div className="flex flex-row items-center min-w-200 gap-2">
-
                             <Input
                                 size="small"
                                 className="rounded-full"
@@ -491,9 +566,17 @@ const In_OutManagement: React.FC = () => {
                                                 _contains: e.target.value,
                                             },
                                         }));
+                                        setFilterHandover((prev: any) => ({
+                                            ...prev,
+                                            name: {
+                                                _contains: e.target.value,
+                                            },
+                                        }));
                                     } else {
                                         const { name, ...filterWithoutFullName } = filter;
-                                        setFilter(filterWithoutFullName)
+                                        setFilter(filterWithoutFullName);
+
+                                        setFilterHandover(filterWithoutFullName)
                                     }
                                 }}
                                 suffix={<SearchOutlined className="text-primary" />}
@@ -529,22 +612,29 @@ const In_OutManagement: React.FC = () => {
                                 <div className="text-base font-medium leading-[26px] whitespace-nowrap">
                                     {`Danh sách biên bản bàn giao ${renderOrganizationName(title)}`}
                                 </div>
+                                <div className="flex flex-row flex-wrap gap-4 items-center">
 
-                                <Checkbox.Group
-                                    className="flex flex-row flex-wrap gap-4"
-                                    onChange={(checkedValues) => {
-                                        form.setFieldsValue({ level: checkedValues });
-                                        formValueChange();
-                                    }}
-                                >
-                                    {ManagementOptions?.map((value: { title: string; key: string }, index: number) => (
-                                        <Checkbox key={value.key} value={value.key}>
-                                            <span className="text-[14px] font-normal leading-[23px]">
-                                                {value.title}
-                                            </span>
-                                        </Checkbox>
-                                    ))}
-                                </Checkbox.Group>
+                                    <Checkbox.Group
+                                        onChange={(checkedValues) => {
+                                            form.setFieldsValue({ type_handover: checkedValues });
+                                            formValueChange1();
+                                        }}
+                                        style={{ width: "100%" }}
+                                    // className="flex flex-col"
+                                    >
+                                        {ManagementOptions?.map(
+                                            (data: { title: string; key: string }, index: number) => (
+                                                <Col className="mt-[10px]">
+                                                    <Checkbox value={data.key}>
+                                                        <span className="text-[14px] font-normal leading-[23px]">
+                                                            {data.title}
+                                                        </span>
+                                                    </Checkbox>
+                                                </Col>
+                                            )
+                                        )}
+                                    </Checkbox.Group>
+                                </div>
                             </div>
                             <BaseTable
                                 loading={isLoading}
@@ -553,15 +643,10 @@ const In_OutManagement: React.FC = () => {
                                 setPagination={setPagination}
                                 rowKey={"id"}
                                 actionClick={handleActions}
-
-
                                 x={800}
-
-
-
                                 onChange={({ current, pageSize }: any) => {
                                     setPagination({ page: current, pageSize });
-                                    fetchData(current, pageSize, filter);
+                                    fetchData(current, pageSize, filter, filterHandover);
                                 }}
                                 paginationCustom={
                                     {
@@ -589,15 +674,10 @@ const In_OutManagement: React.FC = () => {
                                 setPagination={setPagination}
                                 rowKey={"id"}
                                 actionClick={handleActions}
-
-
                                 x={1400}
-
-
-
                                 onChange={({ current, pageSize }: any) => {
                                     setPagination({ page: current, pageSize });
-                                    fetchData(current, pageSize, filter);
+                                    fetchData(current, pageSize, filter, filterHandover);
                                 }}
                                 paginationCustom={
                                     {
@@ -622,15 +702,10 @@ const In_OutManagement: React.FC = () => {
                                 setPagination={setPagination}
                                 rowKey={"id"}
                                 actionClick={handleActions}
-
-
                                 x={1400}
-
-
-
                                 onChange={({ current, pageSize }: any) => {
                                     setPagination({ page: current, pageSize });
-                                    fetchData(current, pageSize, filter);
+                                    fetchData(current, pageSize, filter, filterHandover);
                                 }}
                                 paginationCustom={
                                     {
@@ -642,8 +717,6 @@ const In_OutManagement: React.FC = () => {
                             />
                         </Splitter.Panel>
                     </Splitter>
-
-
                 </div>
             </div>
 
