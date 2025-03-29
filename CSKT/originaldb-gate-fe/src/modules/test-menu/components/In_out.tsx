@@ -22,8 +22,9 @@ import { ic_geo } from "@app/assets/svg";
 import { group } from "console";
 // import TTBAction from "./QLTTBModal";
 import In_OutCreate from "./in_outModal";
+import Handover_View from "./handoverModal";
 import { TTBData } from "../types/TTB.type";
-import { getHandover, metaHandover,getReceivedTTBList, getHandoverList1 } from "../stores/In_out.action";
+import { getHandover, metaHandover,getReceivedTTBList, getHandoverList1, metaHandoverList } from "../stores/In_out.action";
 import { handoverData } from "../types/handover.type";
 
 export const ACTION_TABLE: ITableAction[] = [];
@@ -46,6 +47,8 @@ const In_OutManagement: React.FC = () => {
     const { openModal } = useModal();
     const [meta, setMeta] = useState<IMeta>({ count: 0 });
     const [meta1, setMeta1] = useState<IMeta>({ count: 0 });
+    const [meta2, setMeta2] = useState<IMeta>({ count: 0 });
+
 
     const [filter, setFilter] = useState<any>({});
     const [filterHandover, setFilterHandover] = useState<any>({});
@@ -75,14 +78,14 @@ const In_OutManagement: React.FC = () => {
                 title: "Tên trang bị",
                 dataIndex: "name",
                 fixed: 'left',
-                key: TableGeneralKeys.Name,
+                // key: TableGeneralKeys.Name,
                 render: (value: any, record: any) => {
                     // console.log('record: ', record)
                     // record?.id_tb?.name ?? ''
                     return (
                         <span
                             className="font-semibold text-sm cursor-pointer text-[#3D73D0]"
-                            onClick={() => handleActions(Action.View, record)}
+                            // onClick={() => handleActions(Action.View, record)}
                         >
                               {record?.id_tb?.name ?? ""}
                         </span>
@@ -128,20 +131,9 @@ const In_OutManagement: React.FC = () => {
                 key: "condition_id",
                 render: (value: any, record: any) => record?.id_tb?.condition_id?.name ?? '',
             },
+
             {
-                title: "Chủng loại",
-                dataIndex: "species_id",
-                key: "species_id",
-                render: (value: any, record: any) => record?.id_tb?.species_id?.name ?? '',
-            },
-            {
-                title: "Nhóm TTB",
-                dataIndex: "group_id",
-                key: "group_id",
-                render: (value: any, record: any) => record?.id_tb?.group_id?.name ?? '',
-            },
-            {
-                title: "Thời gian",
+                title: "Thời gian bàn giao",
                 dataIndex: "time",
                 key: "time",
                 render: (value: any,record: any) => {
@@ -157,22 +149,7 @@ const In_OutManagement: React.FC = () => {
                     return `${day}-${month}-${year} /${hours}:${minutes}:${seconds}`;
                 },
             },
-            {
-                title: "id_handover",
-                dataIndex: "id_handover",
-                key: "id_handover",
-                render: (value: any) => {
-                    return value
-                },
-            },
-            {
-
-                title: "Trạng thái",
-                dataIndex: "is_enable",
-                key: "is_enable",
-                render: (flag: boolean) => flag ? <span className="text-green-600">Hoạt động</span> : <span className="text-red">Không hoạt động</span>
-
-            },
+        
         ];
     }, []);
     const columns1: any[] = useMemo(() => {
@@ -222,6 +199,14 @@ const In_OutManagement: React.FC = () => {
                 },
             },
             {
+                title: "Nội dung",
+                dataIndex: "title",
+                key: "title",
+                render: (value: any) => {
+                    return value
+                },
+            },
+            {
                 title: "Đơn vị nhận",
                 dataIndex: "org_receive_id",
                 key: "org_receive_id",
@@ -243,9 +228,9 @@ const In_OutManagement: React.FC = () => {
         switch (key) {
             case Action.View:
                 openModal(
-                    <In_OutCreate detail={item} action={Action.View} />,
+                    <Handover_View detail={item} action={Action.View} />,
                     {
-                        width: '50vw',
+                        width: '80vw',
                         onModalClose(res) {
                             if (res?.success) {
                                 if (res?.success) {
@@ -321,13 +306,17 @@ const In_OutManagement: React.FC = () => {
                 metaHandover(filterHandover),
                 // getReceivedTTBList({ limit: pageSize, page }, filter),
                 getHandoverList1({ limit: pageSize, page }, filter,"Giao"),
-               
+                metaHandoverList(filter,"Nhận"),
+                metaHandoverList(filter,"Giao"),
+
 
 
             ]);
 
             setOrganizations(response[0]);
-            setMeta(res[1]);
+            setMeta(res[5]);
+            setMeta2(res[6]);
+
             // setDatasource(res[0]);
             setDatasource(res[0]);
             setMeta1(res[3]);
@@ -591,14 +580,7 @@ const In_OutManagement: React.FC = () => {
                             
 
                             }}
-                            // onSelect={() => {
-                            //     // Cập nhật org_delivery_id và org_receive_id, gọi formValueChange1()
-                            //     form.setFieldsValue({
-                            //         org_delivery_id: form.getFieldValue('org_id'),
-                            //         org_receive_id: form.getFieldValue('org_id'),
-                            //     });
-                            //     formValueChange1();
-                            // }}
+                          
                         />
                         {/* <div className="flex flex-row items-center min-w-200 gap-2"> */}
                         <div className="flex flex-row items-center min-w-200 gap-2">
@@ -761,7 +743,7 @@ const In_OutManagement: React.FC = () => {
                                     {
                                         current: pagination.page,
                                         pageSize: pagination.pageSize,
-                                        total: meta?.count || 0
+                                        total: meta2?.count || 0
                                     }
                                 }
                             />

@@ -103,9 +103,7 @@ export default function TTBAction({ id, action }: Props) {
             getCommonCategory('hang_san_xuat'),
             getCommonCategory('nhom_TBKT'),
             getCommonCategory('vi_tri'),
-
             await getOrganizationTree({}),
-
         ]);
         setDataSelection({
             condition: responses[0],

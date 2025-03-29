@@ -461,6 +461,24 @@ const In_OutCreate: React.FC<FailureCreateType> = ({
             </Form.Item>
             <Form.Item
               className="mb-4"
+              name={"title"}
+              label={
+                <div className="flex text-[15px] justify-items-start gap-x-1">
+                  Nội dung bàn giao
+                </div>
+              }
+            >
+              {action === Action.Create || Action.Update ? (
+                <Input placeholder="Nhập nội dung" className="border-0 " style={{ resize: "none" }} />
+                
+              ) : (
+                <p className="px-[12px] text-[15px]">
+                  {form.getFieldValue("title") || ""}
+                </p>
+              )}
+            </Form.Item>
+            <Form.Item
+              className="mb-4"
               name={"org_receive_id"}
               label={
                 <div className="flex text-[15px] justify-items-start gap-x-1">
