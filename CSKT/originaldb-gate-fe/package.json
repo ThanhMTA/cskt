@@ -16,7 +16,12 @@
     "@types/swagger-ui-react": "^4.18.3",
     "antd": "^5.24.4",
     "dayjs": "^1.11.10",
+    "docx": "^9.3.0",
+    "docxtemplater": "^3.60.2",
+    "file-saver": "^2.0.5",
+    "jspdf": "^3.0.1",
     "performant-array-to-tree": "^1.11.0",
+    "pizzip": "^3.1.8",
     "postcss-antd-fixes": "^0.2.0",
     "react": "^18.2.0",
     "react-countup": "^6.5.3",
@@ -28,6 +33,7 @@
     "zustand": "^4.5.0"
   },
   "devDependencies": {
+    "@types/file-saver": "^2.0.7",
     "@types/loadable__component": "^5.13.8",
     "@types/node": "^20.10.1",
     "@types/react": "^18.2.43",

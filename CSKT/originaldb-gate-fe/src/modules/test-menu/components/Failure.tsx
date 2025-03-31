@@ -5,7 +5,10 @@ import { Organizations, PersonalIdentify } from "@app/types/types";
 import { ITableAction } from "@app/interfaces/table.interface";
 import { FilterFilled, MenuFoldOutlined, RedoOutlined, SearchOutlined, ClockCircleOutlined, ExclamationCircleTwoTone } from "@ant-design/icons";
 import { ACCOUNT_TYPE } from "../enum/Account.enum";
-import { Space,Badge, Button, Form, Input, Tag, Tooltip, TreeSelect, Col, Checkbox, Select, Drawer, Timeline, Typography } from "antd";
+import { Space,Badge, Button, Form, Input, Tag, Tooltip,
+     TreeSelect, Col, Checkbox, Select, Drawer, Timeline, Typography,
+     Descriptions
+     } from "antd";
 import { arrayToTree } from "performant-array-to-tree";
 import { listToTree } from "@app/core/helper";
 import { getUsersList, metaUsers, getOrganizationTree } from "../stores/Account.action";
@@ -161,6 +164,14 @@ const FailureManagement: React.FC = () => {
                 render: (value: any, record: any) => record?.manufacturer_id?.name ?? '',
             },
             {
+                title: "Quản lý",
+                dataIndex: "management_unit",
+                key: "management_unit",
+                render: (value: any) => {
+                    return value
+                },
+            },
+            {
                 title: "Người quản lý",
                 dataIndex: "manager_id",
                 key: "manager_id",
@@ -185,32 +196,7 @@ const FailureManagement: React.FC = () => {
 
     const handleActions = (key: Action, item: FailureData) => {
         switch (key) {
-            // case Action.View:
-            //     // showDrawer
-            //     openModal(
-            //         <FailureCreate   detail={item} action={Action.View} />,
-            //         {
-            //             width: '50vw',
-            //             onModalClose(res) {
-            //                 if (res?.success) {
-            //                     if (res?.success) {
-            //                         openModal(
-            //                             <FailureCreate detail={item} action={Action.Update} />,
-            //                             {
-            //                                 width: '50vw',
-            //                                 onModalClose() {
-            //                                     reloadData()
-            //                                 },
-            //                             }
-            //                         )
-            //                     } else {
-            //                         reloadData();
-            //                     }
-            //                 }
-            //             },
-            //         }
-            //     )
-            //     break;
+          
             case Action.Create:
                 openModal(
                     <FailureCreate TTB = {selectedItem} action={Action.Create} />,
@@ -239,40 +225,17 @@ const FailureManagement: React.FC = () => {
                     const timeline = failureList.map((failure: FailureData) => ({
                         label: dayjs(failure.time).format("YYYY-MM-DD HH:mm"),
                         children: (
-                            <>
-                                <Typography.Title
-                                    level={5}
-                                    style={{
-                                        margin: 0,
-                                    }}
-                                >
-                                    {failure.name}
-                                </Typography.Title>
-    
-                                <ul style={{ listStyleType: 'disc', paddingLeft: '20px' }}>
-    
-                                    <li><Text type="secondary">Tình trạng :</Text>{failure.condition}</li>
-                                    <li><Text type="secondary">Nội dung</Text>
-                                        <Typography.Paragraph
-                                            ellipsis={
-                                                ellipsis
-                                                    ? {
-                                                        rows: 2,
-                                                        // expandable: true,
-                                                        expandable: 'collapsible',
-                                                        // symbol: 'more',
-                                                      
-                                                        // onExpand: (_, info) => setExpanded(info.expanded),
-                                                    }
-                                                    : false
-                                            }
-    
-                                        >
-                                           {failure.content}
-                                        </Typography.Paragraph>
-                                    </li>
-                                </ul>
-                            </>
+                            <Descriptions 
+                                bordered column={1}
+                                title= {failure.name}
+                                 size="middle">
+                                  <Descriptions.Item label="Tình trạng">
+                                 <b>{failure.condition}</b>
+                                  </Descriptions.Item>
+                                  <Descriptions.Item label="Nội dung">
+                                    <b> {failure.content}</b>
+                                  </Descriptions.Item>
+                                </Descriptions>
                         ),
                         dot: <ClockCircleOutlined style={{ fontSize: 16 }} />,
                         color: "red"
@@ -348,11 +311,16 @@ const FailureManagement: React.FC = () => {
     const formValueChange = async () => {
         let filterValue: any = { _and: [] };
         let filterLevel: any = {};
-        if (form.getFieldValue('level')?.length) {
-            filterLevel = {
-                level: {
-                    _in: form.getFieldValue('level'),
-                }
+        if (form.getFieldValue('management_unit')?.length) {
+            filterValue = {
+                _and: [
+                    ...filterValue._and,
+                    {
+                        management_unit: {
+                            _in: form.getFieldValue('management_unit'),
+                        }
+                    },
+                ],
             };
         }
         if (form.getFieldValue('geo')?.length) {
@@ -381,7 +349,7 @@ const FailureManagement: React.FC = () => {
                         group_id: {
                             _in: form.getFieldValue('group_id'),
                         }
-                    },
+                    }, 
                 ],
             };
         }
@@ -439,7 +407,7 @@ const FailureManagement: React.FC = () => {
     const ManagementOptions: any = [
         {
             title: "Ban truyền dẫn quang",
-            key: "TQD",
+            key: "TDQ",
         },
         {
             title: "Ban Visat",
@@ -458,40 +426,21 @@ const FailureManagement: React.FC = () => {
                 const timeline = failureList.map((failure: FailureData) => ({
                     label: dayjs(failure.time).format("YYYY-MM-DD HH:mm"),
                     children: (
-                        <>
-                            <Typography.Title
-                                level={5}
-                                style={{
-                                    margin: 0,
-                                }}
-                            >
-                                {failure.name}
-                            </Typography.Title>
-
-                            <ul style={{ listStyleType: 'disc', paddingLeft: '20px' }}>
-
-                                <li><Text type="secondary">Tình trạng :</Text>{failure.condition}</li>
-                                <li><Text type="secondary">Nội dung</Text>
-                                    <Typography.Paragraph
-                                        ellipsis={
-                                            ellipsis
-                                                ? {
-                                                    rows: 2,
-                                                    // expandable: true,
-                                                    expandable: 'collapsible',
-                                                    // symbol: 'more',
-                                                  
-                                                    // onExpand: (_, info) => setExpanded(info.expanded),
-                                                }
-                                                : false
-                                        }
-
-                                    >
-                                       {failure.content}
-                                    </Typography.Paragraph>
-                                </li>
-                            </ul>
-                        </>
+                                <Descriptions 
+                                bordered column={1}
+                                title={failure.name.replace(/(^|\.\s*)([a-z])/g, (match, p1, p2) => p1 + p2.toUpperCase())}
+                            
+                                 size="middle">
+                                  <Descriptions.Item label="Tình trạng" labelStyle={{ width: 120 }}>
+                                 {failure.condition.replace(/(^|\.\s*)([a-z])/g, (match, p1, p2) => p1 + p2.toUpperCase())}
+                                  </Descriptions.Item>
+                                  <Descriptions.Item label="Nội dung" labelStyle={{ width: 120 }}>
+                                  {failure.content.replace(/(^|\.\s*)([a-z])/g, (match, p1, p2) => p1 + p2.toUpperCase())}
+                                  </Descriptions.Item>
+                                  {/* <Descriptions.Item label="" labelStyle={{ width: 120 }}>
+                                    <b> {failure.content}</b>
+                                  </Descriptions.Item> */}
+                                </Descriptions>
                     ),
                     dot: <ClockCircleOutlined style={{ fontSize: 16 }} />,
                     color: "red"
@@ -591,20 +540,20 @@ const FailureManagement: React.FC = () => {
                                 className="mt-2"
                             >
                                 <Col className="px-0 -mt-3" span={30}>
-                                    <Checkbox.Group
-                                        style={{ width: "100%" }}
-                                        className="flex flex-col"
+                                <Checkbox.Group
                                         onChange={(checkedValues) => {
-                                            form.setFieldsValue({ level: checkedValues });
+                                            form.setFieldsValue({management_unit: checkedValues });
                                             formValueChange();
                                         }}
+                                        style={{ width: "100%" }}
+                                    // className="flex flex-col"
                                     >
                                         {ManagementOptions?.map(
-                                            (value: { title: string; key: string }, index: number) => (
+                                            (data: { title: string; key: string }, index: number) => (
                                                 <Col className="mt-[10px]">
-                                                    <Checkbox value={value.key}>
+                                                    <Checkbox value={data.key}>
                                                         <span className="text-[14px] font-normal leading-[23px]">
-                                                            {value.title}
+                                                            {data.title}
                                                         </span>
                                                     </Checkbox>
                                                 </Col>
@@ -792,7 +741,7 @@ const FailureManagement: React.FC = () => {
             </div>
             <Drawer
                 title={`Thông tin sự cố của trang bị ${selectedItem?.nick_name}`}
-                width={620}
+                width={820}
                 closable={false}
                 onClose={onClose}
                 open={drawer}
@@ -815,12 +764,12 @@ const FailureManagement: React.FC = () => {
 
                 <Timeline
                     mode="left"
-                    style={{ marginLeft: "-250px" }} // căn trái hơn
+                    style={{ marginLeft: "-450px" }} // căn trái hơn
                     items={timelineData}
                 />
                 <Drawer
                     title="Two-level Drawer {}"
-                    width={320}
+                    width={420}
                     closable={false}
                     onClose={onChildrenDrawerClose}
                     open={childrenDrawer}

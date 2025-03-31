@@ -148,6 +148,15 @@ const TTBManagement: React.FC = () => {
                 render: (value: any, record: any) => record?.manufacturer_id?.name ?? '',
             },
             {
+                title: "Quản lý",
+                dataIndex: "management_unit",
+                key: "management_unit",
+                render: (value: any) => {
+                    return value
+                },
+            },
+            
+            {
                 title: "Người quản lý",
                 dataIndex: "manager_id",
                 key: "manager_id",
@@ -228,31 +237,7 @@ const TTBManagement: React.FC = () => {
     ) => {
         setIsLoading(true);
         try {
-            // let init_filter = {};
-            // switch (userInfo?.role?.name) {
-            //     case Role.ADMIN:
-            //         init_filter = {
-            //             status: {
-            //                 _in: [StatusUser.active, StatusUser.draft]
-            //             }
-            //         };
-            //         break;
-            //     default:
-            //         init_filter = {
-            //             status: {
-            //                 _in: [StatusUser.active]
-            //             }
-            //         };
-            //         break;
-            // }
-            // if (Object.keys(filter).length !== 0) {
-            //     init_filter = {
-            //         personal_id: filter,
-            //         ...init_filter
-            //     }
-            // }
-            // const res = await Promise.all([getTTB({ limit: pageSize, page }, filter), metaCanBo(filter)]);
-
+         
             const response: any = await Promise.all([
                 getOrganizationTree(),
                 // metaUsers({ ...init_filter }),
@@ -295,11 +280,16 @@ const TTBManagement: React.FC = () => {
     const formValueChange = async () => {
         let filterValue: any = { _and: [] };
         let filterLevel: any = {};
-        if (form.getFieldValue('level')?.length) {
-            filterLevel = {
-                level: {
-                    _in: form.getFieldValue('level'),
-                }
+        if (form.getFieldValue('management_unit')?.length) {
+            filterValue = {
+                _and: [
+                    ...filterValue._and,
+                    {
+                        management_unit: {
+                            _in: form.getFieldValue('management_unit'),
+                        }
+                    },
+                ],
             };
         }
         if (form.getFieldValue('geo')?.length) {
@@ -386,11 +376,11 @@ const TTBManagement: React.FC = () => {
     const ManagementOptions: any = [
         {
             title: "Ban truyền dẫn quang",
-            key: "TQD",
+            key: "TDQ",
         },
         {
             title: "Ban Visat",
-            key: "visat",
+            key: "Visat",
         },
 
     ];
@@ -464,20 +454,20 @@ const TTBManagement: React.FC = () => {
                                 className="mt-2"
                             >
                                 <Col className="px-0 -mt-3" span={30}>
-                                    <Checkbox.Group
-                                        style={{ width: "100%" }}
-                                        className="flex flex-col"
+                                <Checkbox.Group
                                         onChange={(checkedValues) => {
-                                            form.setFieldsValue({ level: checkedValues });
+                                            form.setFieldsValue({management_unit: checkedValues });
                                             formValueChange();
                                         }}
+                                        style={{ width: "100%" }}
+                                    // className="flex flex-col"
                                     >
                                         {ManagementOptions?.map(
-                                            (value: { title: string; key: string }, index: number) => (
+                                            (data: { title: string; key: string }, index: number) => (
                                                 <Col className="mt-[10px]">
-                                                    <Checkbox value={value.key}>
+                                                    <Checkbox value={data.key}>
                                                         <span className="text-[14px] font-normal leading-[23px]">
-                                                            {value.title}
+                                                            {data.title}
                                                         </span>
                                                     </Checkbox>
                                                 </Col>

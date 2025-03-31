@@ -13,7 +13,7 @@ export type TTBData = {
     species_id:string;// chủng loại
     unit_id:string;// đơn vị tính
     investor_id:string; // nguồn đầu tư
-    management_id:string;// đơn vị quản lý
+    management_unit:string;// đơn vị quản lý
     manager_id:string;// người quản lý
     manufacturer_id:string;// hãng sản xuất 
     place_id:string;// vị trí hiện tại của trang thiết bị

@@ -88,12 +88,7 @@ export const getReceivedTTBList = async (query: IRequest, extraFilter: any) => {
 };
 
 export const getHandoverList1 = async (query: IRequest, filter: any, type_handover:string) => {
-    // Bước 1: Lọc danh sách biên bản theo time
-    // const handoverRecords = await getItems<handoverData[]>("handover_record", {
-    //     fields: ["id"],
-    //     // filter: filter?.time ? { time: filter.time } : {}, // Chỉ lọc theo time nếu có
-    //     filter
-    // });
+
     const updatedFilter1 = { ...filter };
 
     // Nếu filter chứa _and, loại bỏ các điều kiện không mong muốn

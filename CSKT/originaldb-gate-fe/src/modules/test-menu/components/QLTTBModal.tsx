@@ -277,9 +277,9 @@ export default function TTBAction({ id, action }: Props) {
                 dataIndex: "investor_id"
             },
             {
-                title: "Đơn vị quản lý",
-                content: detail?.management_id || null,
-                dataIndex: "management_id"
+                title: "Quản lý",
+                content: detail?.management_unit || null,
+                dataIndex: "management_unit"
             },
             {
                 title: "Người quản lý",
@@ -388,6 +388,18 @@ export default function TTBAction({ id, action }: Props) {
                 "id"
             );
         }
+        if (["management_unit"].includes(dataIndex)) {
+            return selectMap(
+                [
+                    { id: "TDQ", name: "Truyền dẫn quang" },
+                    { id: "Visat", name: "Visat" },
+                    
+
+                ],
+                "name",
+                "id"
+            );
+        }
     };
     const getDataTReeSelect = (dataIndex: string) => {
         if (["org_id"].includes(dataIndex)) {
@@ -399,18 +411,12 @@ export default function TTBAction({ id, action }: Props) {
         }
         if (["place_id"].includes(dataIndex)) {
             return selectMap(
-                dataSelection?.place,
+                dataSelection?.org,
                 "name",
                 "id"
             );
         }
-        if (["management_id"].includes(dataIndex)) {
-            return selectMap(
-                dataSelection?.management,
-                "name",
-                "id"
-            );
-        }
+      
        
     };
     useEffect(() => {
@@ -526,7 +532,7 @@ export default function TTBAction({ id, action }: Props) {
                                     // addressField={value?.dataIndex === "ward_id"}
                                     treeField={{
                                         isSelect: value?.dataIndex === "org_id"||
-                                        value?.dataIndex === "management_id"||
+                                        // value?.dataIndex === "management_id"||
                                         value?.dataIndex === "place_id", 
 
                                         // dataSelect: dataSelection.org,
@@ -541,7 +547,7 @@ export default function TTBAction({ id, action }: Props) {
                                             value?.dataIndex === "unit_id" ||
                                             value?.dataIndex === "investor_id" ||
                                             value?.dataIndex === "manager_id" ||
-                                            value?.dataIndex === "manager_id" ||
+                                            value?.dataIndex === "management_unit" ||
                                             value?.dataIndex === "manufacturer_id" ||
                                             value?.dataIndex === "group_id" ||
                                             value?.dataIndex === "hierarchy",

@@ -12,7 +12,7 @@ import AccountManagement from "../components/Account";
 import FailureManagement from "../components/Failure";
 import TTBManagement from "../components/QLTTB";
 import In_OutManagement from "../components/In_out";
-
+import StoreManagement from "../components/Store";
 export default function TestManagement() {
     const navigate = useNavigate();
     const [activeTab, setActiveTab] = useState<string>(SystemType.TTB);
@@ -50,9 +50,9 @@ export default function TestManagement() {
         },
         {
             key: SystemType.Account,
-            label: "Quản lý tài khoản",
+            label: "Quản lý kho",
             children: <div className="bg-[#F5F5F6] h-svh">
-                <AccountManagement />
+                <StoreManagement />
             </div>,
             icon: <UserOutlined />,
         },

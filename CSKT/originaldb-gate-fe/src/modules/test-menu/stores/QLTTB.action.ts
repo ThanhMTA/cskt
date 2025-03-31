@@ -38,9 +38,7 @@ export const getTTB = (query: IRequest, filter: any) => {
             {
                 investor_id: ["*"],// nguồn đầu tư
             },
-            {
-                management_id: ["*"], // đơn vị quản lý
-            },
+          
             {
                 manager_id: ["*"], // người quản lý
             },
@@ -88,9 +86,6 @@ export const getTTBDetail = (id: any, filter: any) => {
             },
             {
                 investor_id: ["*"],// nguồn đầu tư
-            },
-            {
-                management_id: ["*"], // đơn vị quản lý
             },
             {
                 manager_id: ["*"], // người quản lý
