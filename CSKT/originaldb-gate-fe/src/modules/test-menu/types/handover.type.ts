@@ -12,5 +12,6 @@ export type handoverData = {
     receiver_id:string;// id người nhận
     created_at?:string;
     updated_at?:string;
+    content:string;
 
   }

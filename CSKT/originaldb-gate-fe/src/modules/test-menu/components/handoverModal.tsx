@@ -1,11 +1,9 @@
 
 import { SPACE_PROP_DEFAULT } from "@app/configs/ant-component";
 // import { Flex, Form, Space, Tooltip, Popconfirm, Button } from "antd";
-import { saveAs } from "file-saver";
-import { Document, Packer, Paragraph, TextRun } from "docx";
+
 // import htmlDocx from "html-docx-js";
-import jsPDF from "jspdf";
-import html2canvas from "html2canvas";
+
 import {
   Button, DatePicker, Divider, Flex, Form, Input, Popconfirm,
   Radio, Select, Space, Tooltip, TreeSelect, Col, Row, Checkbox,
@@ -36,12 +34,16 @@ import { getUsersList, metaUsers, getOrganizationTree } from "../stores/Account.
 import { FilterFilled, MenuFoldOutlined, RedoOutlined, SearchOutlined } from "@ant-design/icons";
 import { IMeta } from "@app/interfaces/common.interface";
 import { getCanBo } from "../stores/In_out.action";
+import PizZip from "pizzip";
+import Docxtemplater from "docxtemplater";
+import { saveAs } from "file-saver";
 import { createHandover, createHandoverList, getHandoverDetail, metaHandoverDetail } from "../stores/In_out.action";
 import { handoverData } from "../types/handover.type";
 const { Title, Text } = Typography;
 // import { getCanBo } from "@app/modules/officer-categories/store/CanBoCategories.action";
 import { CanBoCategoriesData } from "@app/modules/officer-categories/types/CanBoCategories.types";
-import {generateWordFile} from "./exportWord";
+import { title } from "process";
+// import { generateWordFile } from "./exportWord";
 type FailureCreateType = {
   action: Action;
   detail?: TTBData;
@@ -211,59 +213,81 @@ const Handover_View: React.FC<FailureCreateType> = ({
     getDetail()
     setHandoverDetail(datasource[0])
   })
-  // console.log("kta:",handoverdetail)
-  // const handoverdetail = datasource?.[0];
-  // Kiểm tra giá trị trước
-  // Chạy lại khi `handoverdetail` thay đổi
-
   const date = new Date(handoverdetail?.id_handover?.time ?? '');
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, "0");
   const day = String(date.getDate()).padStart(2, "0");
-  // const handleExport = () => {
-  //   ExportToWord({ handoverdetail, datasource });
-  // };
-  // const pdfRef = useRef(); // Tạo ref để lấy nội dung cần xuất
-  const pdfRef = useRef<HTMLDivElement | null>(null);
+  // console.log('ktra:', deliverer)
+  // console.log('ktra1:', position_deliverer)
 
-  const exportPDF = () => {
-    const input = pdfRef.current;
-    if (!input) return; // Tránh lỗi nếu ref chưa được gán
+  const generateWordFile = async () => {
+    try {
+      // 1️⃣ Tải file mẫu từ thư mục public
+      const response = await fetch("/template.docx");
+      if (!response.ok) throw new Error("Không tìm thấy file template");
 
-    html2canvas(input, { scale: 2 }).then((canvas) => {
-      const imgData = canvas.toDataURL("image/png");
-      const pdf = new jsPDF("p", "mm", "a4");
-      const imgWidth = 210; // Chiều rộng A4 (mm)
-      const imgHeight = (canvas.height * imgWidth) / canvas.width;
-      pdf.addImage(imgData, "PNG", 0, 0, imgWidth, imgHeight);
-      pdf.save("handover_document.pdf");
-    });
+      const blob = await response.blob();
+      const content = await blob.arrayBuffer();
+
+      // 2️⃣ Đọc và xử lý file DOCX
+      const zip = new PizZip(content);
+      const doc = new Docxtemplater(zip);
+      const date = new Date(handoverdetail?.id_handover?.time ?? '');
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const day = String(date.getDate()).padStart(2, "0");
+      const position_receiver = handoverdetail?.id_handover?.receiver_id?.chucvu_id?.name ?? ''
+      const receiver_rank = handoverdetail?.id_handover?.receiver_id?.capbac_id?.short_name ?? ''
+      const receiver = handoverdetail?.id_handover?.receiver_id?.name ?? ''
+      const position_deliverer = handoverdetail?.id_handover?.deliverer_id?.chucvu_id?.name ?? ''
+      const deliverer_rank = handoverdetail?.id_handover?.deliverer_id?.capbac_id?.short_name ?? ''
+      const deliverer = handoverdetail?.id_handover?.deliverer_id?.name ?? ''
+      const title = handoverdetail?.id_handover?.title ?? ''
+      const content1 = handoverdetail?.id_handover?.content ?? ''
+      const org_delivery = handoverdetail?.id_handover?.org_delivery_id?.name ?? ''
+      const org_receive = handoverdetail?.id_handover?.org_receive_id?.name ?? ''
+      // 3️⃣ Truyền dữ liệu động vào file
+      const devices = datasource.map((record, index) => ({
+        index: index + 1, // Thêm số thứ tự nếu cần
+        name: record?.id_tb?.name ?? '',
+        unit: record?.id_tb?.unit_id?.name ?? '',
+        quantity: record?.id_tb?.quantity ?? '',
+        serial_number: record?.id_tb?.serial_number ?? '',
+        condition: record?.id_tb?.condition_id?.name ?? '',
+      }));
+
+      const data = {
+        day,
+        month,
+        year,
+        receiver,
+        deliverer,
+        position_receiver,
+        receiver_rank,
+        position_deliverer,
+        deliverer_rank,
+        title,
+        content:content1,
+        org_delivery: org_delivery?.toUpperCase() ?? "",  // Tránh lỗi nếu null/undefined
+        org_receive: org_receive?.toUpperCase() ?? "",   // Tránh lỗi nếu null/undefined
+        devices,
+      };
+      
+    
+      
+      doc.setData(data);
+      
+
+      doc.render(); // Render dữ liệu
+
+      // 4️⃣ Xuất file DOCX mới
+      const output = doc.getZip().generate({ type: "blob" });
+      saveAs(output, "Bien_Ban_Ban_Giao.docx");
+
+    } catch (error) {
+      console.error("Lỗi khi tạo file Word:", error);
+    }
   };
-  // const wordRef = useRef<HTMLDivElement | null>(null); 
-//   const generateWordFile = () => {
-//     const doc = new Document({
-//         sections: [
-//             {
-//                 properties: {},
-//                 children: [
-//                     new Paragraph({
-//                         children: [
-//                             new TextRun("Hello, đây là file Word xuất từ ReactJS!"),
-//                             new TextRun({
-//                                 text: " Được tạo bằng thư viện docx.",
-//                                 bold: true,
-//                             }),
-//                         ],
-//                     }),
-//                 ],
-//             },
-//         ],
-//     });
-
-//     Packer.toBlob(doc).then((blob) => {
-//         saveAs(blob, "document.docx");
-//     });
-// }; 
   return (
     <Space
       {...SPACE_PROP_DEFAULT}
@@ -271,116 +295,119 @@ const Handover_View: React.FC<FailureCreateType> = ({
     // size={20}
     >
 
-      <div ref={ pdfRef } style={{ padding: 20, background: "#fff" }}>
+      <div style={{ padding: 20, background: "#fff" }}>
 
         {/* <Card style={{ width: "90%", margin: "auto", padding: "20px", border: "1px solid #000" }}> */}
-          {/* Phần Header */}
-          <Row>
-            <Col span={8} style={{ textAlign: "center" }}>
-              <Text strong>TRUNG TÂM KTTT CNC</Text>
-              <br />
-              <Text strong>PHÒNG KỸ THUẬT</Text>
-              <br />
-              <Text strong>TRUYỀN DẪN THÔNG TIN VỆ TINH</Text>
-            </Col>
-            <Col span={8}></Col>
-            <Col span={8} style={{ textAlign: "center" }}>
-              <Text strong>CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM</Text>
-              <br />
-              <Text strong>Độc lập - Tự do - Hạnh phúc</Text>
-              <br />
-              <Text italic>Hà Nội, ngày {day} tháng {month} năm {year} </Text>
-            </Col>
-          </Row>
+        {/* Phần Header */}
+        <Row>
+          <Col span={8} style={{ textAlign: "center" }}>
+            <Text strong>TRUNG TÂM KTTT CNC</Text>
+            <br />
+            <Text strong>PHÒNG KỸ THUẬT</Text>
+            <br />
+            <Text strong>TRUYỀN DẪN THÔNG TIN VỆ TINH</Text>
+          </Col>
+          <Col span={8}></Col>
+          <Col span={8} style={{ textAlign: "center" }}>
+            <Text strong>CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM</Text>
+            <br />
+            <Text strong>Độc lập - Tự do - Hạnh phúc</Text>
+            <br />
+            <Text italic>Hà Nội, ngày {day} tháng {month} năm {year} </Text>
+          </Col>
+        </Row>
 
-          {/* Tiêu đề */}
-          <Title level={3} style={{ textAlign: "center", marginTop: "20px" }}>
-            BIÊN BẢN BÀN GIAO
-          </Title>
+        {/* Tiêu đề */}
+        <Title level={3} style={{ textAlign: "center", marginTop: "20px" }}>
+          BIÊN BẢN BÀN GIAO
+        </Title>
+        <Title level={5} style={{ textAlign: "center" }}>
+         {handoverdetail?.id_handover?.title ?? ''}
+        </Title>
 
-          {/* Nội dung mô tả */}
-          <Typography.Paragraph style={{ textAlign: "justify" }}>
-            &nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp; Hôm nay, ngày {day} tháng {month} năm {year} , chúng tôi thực hiện {handoverdetail?.id_handover?.title ?? ''}, cụ thể như sau:
-          </Typography.Paragraph>
+        {/* Nội dung mô tả */}
+        <Typography.Paragraph style={{ textAlign: "justify" }}>
+          &nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp; Hôm nay, ngày {day} tháng {month} năm {year} , chúng tôi thực hiện {handoverdetail?.id_handover?.content ?? ''}, cụ thể như sau:
+        </Typography.Paragraph>
 
-          {/* Thông tin Bên giao & Bên nhận */}
-          <Descriptions bordered column={1} size="middle">
-            <Descriptions.Item label="I. BÊN GIAO" labelStyle={{ width: 150 }}>
-              <b>{handoverdetail?.id_handover?.org_delivery_id?.name ?? ''}</b>
+        {/* Thông tin Bên giao & Bên nhận */}
+        <Descriptions bordered column={1} size="middle">
+          <Descriptions.Item label="I. BÊN GIAO" labelStyle={{ width: 150 }}>
+            <b>{handoverdetail?.id_handover?.org_delivery_id?.name ?? ''}</b>
 
-              <br />
-              - Đại diện: Đ/c: {handoverdetail?.id_handover?.deliverer_id?.capbac_id?.short_name ?? ''} {handoverdetail?.id_handover?.deliverer_id?.name ?? ''}
+            <br />
+            - Đại diện: Đ/c: {handoverdetail?.id_handover?.deliverer_id?.capbac_id?.short_name ?? ''} {handoverdetail?.id_handover?.deliverer_id?.name ?? ''}
 
-              <br />
-              - Chức vụ: {handoverdetail?.id_handover?.deliverer_id?.chucvu_id?.name ?? ''}
-            </Descriptions.Item>
-            <Descriptions.Item label="II. BÊN NHẬN" labelStyle={{ width: 150 }}>
-              <b>{handoverdetail?.id_handover?.org_receive_id?.name ?? ''}</b>
-              <br />
-              - Đại diện: Đ/c: {handoverdetail?.id_handover?.receiver_id?.capbac_id?.short_name ?? ''} {handoverdetail?.id_handover?.receiver_id?.name ?? ''}
-              <br />
-              - Chức vụ: {handoverdetail?.id_handover?.receiver_id?.chucvu_id?.name ?? ''}
-            </Descriptions.Item>
-          </Descriptions>
+            <br />
+            - Chức vụ: {handoverdetail?.id_handover?.deliverer_id?.chucvu_id?.name ?? ''}
+          </Descriptions.Item>
+          <Descriptions.Item label="II. BÊN NHẬN" labelStyle={{ width: 150 }}>
+            <b>{handoverdetail?.id_handover?.org_receive_id?.name ?? ''}</b>
+            <br />
+            - Đại diện: Đ/c: {handoverdetail?.id_handover?.receiver_id?.capbac_id?.short_name ?? ''} {handoverdetail?.id_handover?.receiver_id?.name ?? ''}
+            <br />
+            - Chức vụ: {handoverdetail?.id_handover?.receiver_id?.chucvu_id?.name ?? ''}
+          </Descriptions.Item>
+        </Descriptions>
 
-          {/* Bảng nội dung bàn giao */}
-          <Title level={4} style={{ marginTop: "20px" }}>
-            III. NỘI DUNG BÀN GIAO
-          </Title>
-          <Table
-            columns={columns}
-            dataSource={datasource}
-            pagination={false}
-            bordered
-            size="middle"
-          />
+        {/* Bảng nội dung bàn giao */}
+        <Title level={4} style={{ marginTop: "20px" }}>
+          III. NỘI DUNG BÀN GIAO
+        </Title>
+        <Table
+          columns={columns}
+          dataSource={datasource}
+          pagination={false}
+          bordered
+          size="middle"
+        />
 
-          {/* Ghi chú cuối */}
-          <Typography.Paragraph style={{ marginTop: "20px", textAlign: "justify" }}>
-            Biên bản này được lập thành 02 bản, có giá trị như nhau; mỗi bên giữ 01 bản.
-          </Typography.Paragraph>
+        {/* Ghi chú cuối */}
+        <Typography.Paragraph style={{ marginTop: "20px", textAlign: "justify" }}>
+          Biên bản này được lập thành 02 bản, có giá trị như nhau; mỗi bên giữ 01 bản.
+        </Typography.Paragraph>
 
-          {/* Ký tên */}
-          <Row style={{ marginTop: "20px", textAlign: "center", fontWeight: "bold" }}>
-            <Col span={12}><b>BÊN GIAO</b></Col>
-            <Col span={12}><b>BÊN NHẬN</b></Col>
-          </Row>
-          <Row style={{ marginTop: "60px", textAlign: "center" }}>
-            <Col span={12}>
-              <Text ><b>
-                {handoverdetail?.id_handover?.deliverer_id?.capbac_id?.short_name ?? ''} {handoverdetail?.id_handover?.deliverer_id?.name ?? ''}
+        {/* Ký tên */}
+        <Row style={{ marginTop: "20px", textAlign: "center", fontWeight: "bold" }}>
+          <Col span={12}><b>BÊN GIAO</b></Col>
+          <Col span={12}><b>BÊN NHẬN</b></Col>
+        </Row>
+        <Row style={{ marginTop: "60px", textAlign: "center" }}>
+          <Col span={12}>
+            <Text ><b>
+              {handoverdetail?.id_handover?.deliverer_id?.capbac_id?.short_name ?? ''} {handoverdetail?.id_handover?.deliverer_id?.name ?? ''}
 
-              </b></Text>
-            </Col>
-            <Col span={12}>
-              <Text>
-                <b>
-                  {handoverdetail?.id_handover?.receiver_id?.capbac_id?.short_name ?? ''} {handoverdetail?.id_handover?.receiver_id?.name ?? ''}
-                </b>
-              </Text>
-            </Col>
-          </Row>
+            </b></Text>
+          </Col>
+          <Col span={12}>
+            <Text>
+              <b>
+                {handoverdetail?.id_handover?.receiver_id?.capbac_id?.short_name ?? ''} {handoverdetail?.id_handover?.receiver_id?.name ?? ''}
+              </b>
+            </Text>
+          </Col>
+        </Row>
 
         {/* </Card> */}
 
 
       </div>
       <div style={{ textAlign: "right", marginLeft: "50px" }}>
-          {/* <Button type="primary"
+        {/* <Button type="primary"
          onClick={handleExport}
         >
           Xuất file Word
         </Button> */}
-          <Button
-            //  onClick={exportToWord}
-            // onClick={exportPDF}
-            onClick={generateWordFile}
-            type="primary"
-          >
-            Xuất file
-          </Button>
+        <Button
+          //  onClick={exportToWord}
+          // onClick={exportPDF}
+          onClick={generateWordFile}
+          type="primary"
+        >
+          Xuất file
+        </Button>
 
-        </div>
+      </div>
     </Space>
 
 

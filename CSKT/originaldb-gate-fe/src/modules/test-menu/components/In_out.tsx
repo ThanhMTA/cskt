@@ -199,7 +199,7 @@ const In_OutManagement: React.FC = () => {
                 },
             },
             {
-                title: "Nội dung",
+                title: "Tiêu đề",
                 dataIndex: "title",
                 key: "title",
                 render: (value: any) => {
