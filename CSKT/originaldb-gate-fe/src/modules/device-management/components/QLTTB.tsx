@@ -9,7 +9,7 @@ import { Badge, Button, Form, Input, Tag, Tooltip, TreeSelect, Col, Checkbox, Se
 import { arrayToTree } from "performant-array-to-tree";
 import { listToTree } from "@app/core/helper";
 import { getUsersList, metaUsers, getOrganizationTree } from "../stores/Account.action";
-import { getTTB, metaTTB, getCommonCategory, getPlaceTree } from "../stores/Store.action";
+import { getTTB, metaTTB, getCommonCategory, getPlaceTree } from "../stores/QLTTB.action";
 import { TableGeneralKeys } from "@app/enums/table.enum";
 import { DEFAULT_PAGESIZE } from "@app/configs/app.config";
 import dayjs from "dayjs";
@@ -20,7 +20,7 @@ import { useModal } from "@app/contexts/ModalContext";
 // import TTBAction from "./QLTTBModal";
 import { ic_geo } from "@app/assets/svg";
 import { group } from "console";
-import TTBAction from "./QLTTBModal";
+import TTBAction from "../Modal/QLTTBModal";
 import { TTBData } from "../types/TTB.type";
 
 export const ACTION_TABLE: ITableAction[] = [];
@@ -38,7 +38,7 @@ interface ICommonCategory {
     group: any[],
     // position: any[],
 }
-const StoreManagement: React.FC = () => {
+const TTBManagement: React.FC = () => {
     const [form] = Form.useForm();
     const { openModal } = useModal();
     const [meta, setMeta] = useState<IMeta>({ count: 0 });
@@ -606,20 +606,76 @@ const StoreManagement: React.FC = () => {
                                 className="rounded-full"
                                 placeholder="Nhập tên trang thiết bị"
                                 allowClear
+                                // onChange={(e: any) => {
+                                //     setPagination({ page: 1, pageSize: DEFAULT_PAGESIZE });
+                                //     if (e.target.value !== '') {
+                                //         setFilter((prev: any) => ({
+                                //             ...prev,
+                                            
+                                //             name: {
+                                //                 _contains: e.target.value,
+                                //             },
+                                //             serial_number: {
+                                //                 _contains: e.target.value,
+                                //             },
+                                //         }));
+                                //     } else {
+                                //         const { name,serial_number, ...filterWithoutFullName } = filter;
+                                //         setFilter(filterWithoutFullName)
+                                //     }
+                                // }}
+                          
                                 onChange={(e: any) => {
                                     setPagination({ page: 1, pageSize: DEFAULT_PAGESIZE });
+                                
                                     if (e.target.value !== '') {
                                         setFilter((prev: any) => ({
                                             ...prev,
-                                            name: {
-                                                _contains: e.target.value,
-                                            },
+                                            _or: [
+                                                { name: { _contains: e.target.value } },
+                                                { serial_number: { _contains: e.target.value } },
+                                                { nick_name: { _contains: e.target.value } },
+                                                { management_unit: { _contains: e.target.value } },
+                                                // { unit_id: { _contains: e.target.value } },
+                                                { quantity: { _contains: e.target.value } },
+                                                { condition_id: {
+                                                    name: { _contains: e.target.value }
+                                                }
+                                                   
+                                                 },
+                                                { investor_id:{
+                                                    name: { _contains: e.target.value } },
+                                                },
+                                                { manufacturer_id:{
+                                                    name:  { _contains: e.target.value } },
+                                                },   
+                                                { unit_id:{
+                                                    name:  { _contains: e.target.value } },
+                                                },   
+                                                { org_id:{
+                                                    name:  { _contains: e.target.value } },
+                                                },  
+                                                { place_id:{
+                                                    name:  { _contains: e.target.value } },
+                                                }, 
+                                                { species_id:{
+                                                    name:  { _contains: e.target.value } },
+                                                },  
+                                                { group_id:{
+                                                    name:  { _contains: e.target.value } },
+                                                },        
+                                                { manager_id:
+                                                    {
+                                                        name:{ _contains: e.target.value } },
+                                                    } 
+                                            ],
                                         }));
                                     } else {
-                                        const { name, ...filterWithoutFullName } = filter;
-                                        setFilter(filterWithoutFullName)
+                                        const { _or, ...filterWithoutOr } = filter;
+                                        setFilter(filterWithoutOr);
                                     }
                                 }}
+                                 
                                 suffix={<SearchOutlined className="text-primary" />}
                             />
                             <Button onClick={() => {
@@ -670,4 +726,4 @@ const StoreManagement: React.FC = () => {
         </div>
     );
 };
-export default StoreManagement;
+export default TTBManagement;

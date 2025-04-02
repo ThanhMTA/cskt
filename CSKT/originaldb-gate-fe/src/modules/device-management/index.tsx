@@ -8,7 +8,7 @@ export const Router: RouteObject = {
     path: '',
     children: [
         {
-            path: RouterUrl.TestMenu,
+            path: RouterUrl.DeciveManagement,
             element: <SystemManagementPage />,
         }
     ]

@@ -14,7 +14,7 @@ export enum RouterUrl {
   ProblemSummary = "/tong-hop-su-co",
   SystemManagement = "/quan-tri-he-thong",
   Test = "/test",
-  TestMenu = "/trang-thiet-bi"
+  DeciveManagement = "/trang-thiet-bi"
 
 }
 

@@ -114,6 +114,11 @@ export const updateTTB = (id: any, params: any) => {
         ...params,
     });
 };
+export const updateTTBPlace = (id: any, placeId: any) => {
+    return update<TTBData>("trang_thiet_bi", id, {
+        place_id: placeId,
+    });
+};
 export const removeTTB = (id: any) => {
     return deleteData<TTBData>("trang_thiet_bi", id);
 };

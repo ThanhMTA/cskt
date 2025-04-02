@@ -9,7 +9,7 @@ import { Badge, Button, Form, Input, Tag, Tooltip, TreeSelect, Col, Checkbox, Se
 import { arrayToTree } from "performant-array-to-tree";
 import { listToTree } from "@app/core/helper";
 import { getUsersList, metaUsers, getOrganizationTree } from "../stores/Account.action";
-import { getTTB, metaTTB, getCommonCategory, getPlaceTree } from "../stores/QLTTB.action";
+import { getTTB, metaTTB, getCommonCategory, getPlaceTree } from "../stores/Store.action";
 import { TableGeneralKeys } from "@app/enums/table.enum";
 import { DEFAULT_PAGESIZE } from "@app/configs/app.config";
 import dayjs from "dayjs";
@@ -20,7 +20,7 @@ import { useModal } from "@app/contexts/ModalContext";
 // import TTBAction from "./QLTTBModal";
 import { ic_geo } from "@app/assets/svg";
 import { group } from "console";
-import TTBAction from "./QLTTBModal";
+import TTBAction from "../Modal/QLTTBModal";
 import { TTBData } from "../types/TTB.type";
 
 export const ACTION_TABLE: ITableAction[] = [];
@@ -38,7 +38,7 @@ interface ICommonCategory {
     group: any[],
     // position: any[],
 }
-const TTBManagement: React.FC = () => {
+const StoreManagement: React.FC = () => {
     const [form] = Form.useForm();
     const { openModal } = useModal();
     const [meta, setMeta] = useState<IMeta>({ count: 0 });
@@ -670,4 +670,4 @@ const TTBManagement: React.FC = () => {
         </div>
     );
 };
-export default TTBManagement;
+export default StoreManagement;

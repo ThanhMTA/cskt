@@ -30,8 +30,10 @@ import { FilterFilled, MenuFoldOutlined, RedoOutlined, SearchOutlined } from "@a
 import { IMeta } from "@app/interfaces/common.interface";
 import { getCanBo } from "../stores/In_out.action";
 import { createHandover, createHandoverList } from "../stores/In_out.action";
+import { updateTTBPlace } from "../stores/QLTTB.action";
 // import { getCanBo } from "@app/modules/officer-categories/store/CanBoCategories.action";
 import { CanBoCategoriesData } from "@app/modules/officer-categories/types/CanBoCategories.types";
+import Item from "antd/es/list/Item";
 type FailureCreateType = {
   action: Action;
   detail?: TTBData;
@@ -106,6 +108,14 @@ const In_OutCreate: React.FC<FailureCreateType> = ({
             id_handover: handoverId,
             id_tb: item.id,
           }));
+          const TTBPlaceData= datasourceIn.map((item) => ({
+            id_place: handoverRes.org_receive_id,
+            id_tb: item.id,
+          }));
+        // Sử dụng Promise.all để chờ tất cả các cập nhật hoàn thành
+        await Promise.all(TTBPlaceData.map(async (item) => {
+            return updateTTBPlace(item.id_tb, item.id_place);
+        }));
           await Promise.all(handoverListData.map((item) => createHandoverList(item)));
           openMessage({
             type: "success",
