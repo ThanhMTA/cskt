@@ -21,3 +21,8 @@ docker compose cp ./init/original-gate-full.sql original-gate-db:/original-gate.
 docker compose exec -it original-gate-db psql -U postgres -d original-gate -f original-gate.sql
 docker compose exec -it original-gate-db rm original-gate.sql
 ```
+#restart 
+```
+docker compose stop 
+docker compose restart
+```
