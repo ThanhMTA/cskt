@@ -632,41 +632,41 @@ const TTBManagement: React.FC = () => {
                                         setFilter((prev: any) => ({
                                             ...prev,
                                             _or: [
-                                                { name: { _contains: e.target.value } },
-                                                { serial_number: { _contains: e.target.value } },
-                                                { nick_name: { _contains: e.target.value } },
-                                                { management_unit: { _contains: e.target.value } },
-                                                // { unit_id: { _contains: e.target.value } },
-                                                { quantity: { _contains: e.target.value } },
+                                                { name: { _icontains: e.target.value } },
+                                                { serial_number: { _icontains: e.target.value } },
+                                                { nick_name: { _icontains: e.target.value } },
+                                                { management_unit: { _icontains: e.target.value } },
+                                                // { unit_id: { _icontains: e.target.value } },
+                                                { quantity: { _icontains: e.target.value } },
                                                 { condition_id: {
-                                                    name: { _contains: e.target.value }
+                                                    name: { _icontains: e.target.value }
                                                 }
                                                    
                                                  },
                                                 { investor_id:{
-                                                    name: { _contains: e.target.value } },
+                                                    name: { _icontains: e.target.value } },
                                                 },
                                                 { manufacturer_id:{
-                                                    name:  { _contains: e.target.value } },
+                                                    name:  { _icontains: e.target.value } },
                                                 },   
                                                 { unit_id:{
-                                                    name:  { _contains: e.target.value } },
+                                                    name:  { _icontains: e.target.value } },
                                                 },   
                                                 { org_id:{
-                                                    name:  { _contains: e.target.value } },
+                                                    name:  { _icontains: e.target.value } },
                                                 },  
                                                 { place_id:{
-                                                    name:  { _contains: e.target.value } },
+                                                    name:  { _icontains: e.target.value } },
                                                 }, 
                                                 { species_id:{
-                                                    name:  { _contains: e.target.value } },
+                                                    name:  { _icontains: e.target.value } },
                                                 },  
                                                 { group_id:{
-                                                    name:  { _contains: e.target.value } },
+                                                    name:  { _icontains: e.target.value } },
                                                 },        
                                                 { manager_id:
                                                     {
-                                                        name:{ _contains: e.target.value } },
+                                                        name:{ _icontains: e.target.value } },
                                                     } 
                                             ],
                                         }));

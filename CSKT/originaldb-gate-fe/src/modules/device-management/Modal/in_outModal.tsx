@@ -752,20 +752,70 @@ const In_OutCreate: React.FC<FailureCreateType> = ({
                 className="rounded-full"
                 placeholder="Nhập tên trang thiết bị"
                 allowClear
-                onChange={(e: any) => {
-                  setPagination({ page: 1, pageSize: DEFAULT_PAGESIZE });
-                  if (e.target.value !== '') {
-                    setFilter((prev: any) => ({
-                      ...prev,
-                      name: {
-                        _contains: e.target.value,
-                      },
-                    }));
-                  } else {
-                    const { name, ...filterWithoutFullName } = filter;
-                    setFilter(filterWithoutFullName)
-                  }
-                }}
+                // onChange={(e: any) => {
+                //   setPagination({ page: 1, pageSize: DEFAULT_PAGESIZE });
+                //   if (e.target.value !== '') {
+                //     setFilter((prev: any) => ({
+                //       ...prev,
+                //       name: {
+                //         _contains: e.target.value,
+                //       },
+                //     }));
+                //   } else {
+                //     const { name, ...filterWithoutFullName } = filter;
+                //     setFilter(filterWithoutFullName)
+                //   }
+                // }}
+                      onChange={(e: any) => {
+                                                    setPagination({ page: 1, pageSize: DEFAULT_PAGESIZE });
+                                                
+                                                    if (e.target.value !== '') {
+                                                        setFilter((prev: any) => ({
+                                                            ...prev,
+                                                            _or: [
+                                                                { name: { _icontains: e.target.value } },
+                                                                { serial_number: { _icontains: e.target.value } },
+                                                                { nick_name: { _icontains: e.target.value } },
+                                                                // { management_unit: { _icontains: e.target.value } },
+                                                                // { unit_id: { _icontains: e.target.value } },
+                                                                // { quantity: { _icontains: e.target.value } },
+                                                                { condition_id: {
+                                                                    name: { _icontains: e.target.value }
+                                                                }
+                                                                   
+                                                                 },
+                                                                // { investor_id:{
+                                                                //     name: { _icontains: e.target.value } },
+                                                                // },
+                                                                // { manufacturer_id:{
+                                                                //     name:  { _icontains: e.target.value } },
+                                                                // },   
+                                                                // { unit_id:{
+                                                                //     name:  { _icontains: e.target.value } },
+                                                                // },   
+                                                                { org_id:{
+                                                                    name:  { _icontains: e.target.value } },
+                                                                },  
+                                                                // { place_id:{
+                                                                //     name:  { _icontains: e.target.value } },
+                                                                // }, 
+                                                                // { species_id:{
+                                                                //     name:  { _icontains: e.target.value } },
+                                                                // },  
+                                                                // { group_id:{
+                                                                //     name:  { _icontains: e.target.value } },
+                                                                // },        
+                                                                // { manager_id:
+                                                                //     {
+                                                                //         name:{ _icontains: e.target.value } },
+                                                                //     } 
+                                                            ],
+                                                        }));
+                                                    } else {
+                                                        const { _or, ...filterWithoutOr } = filter;
+                                                        setFilter(filterWithoutOr);
+                                                    }
+                                                }}
                 suffix={<SearchOutlined className="text-primary" />}
               />
 

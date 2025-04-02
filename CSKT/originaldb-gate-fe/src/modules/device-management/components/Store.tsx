@@ -155,7 +155,7 @@ const StoreManagement: React.FC = () => {
                     return value
                 },
             },
-            
+
             {
                 title: "Người quản lý",
                 dataIndex: "manager_id",
@@ -237,7 +237,7 @@ const StoreManagement: React.FC = () => {
     ) => {
         setIsLoading(true);
         try {
-         
+
             const response: any = await Promise.all([
                 getOrganizationTree(),
                 // metaUsers({ ...init_filter }),
@@ -390,7 +390,7 @@ const StoreManagement: React.FC = () => {
             className="overflow-hidden rounded-lg bg-white w-[1180px]  p-3  "
         // style={{ height: `calc(100vh - ${LayoutSpace.SectionMargin}px)` }}
         >
-            <div className="flex gap-4 p-4"  style={{ height: `calc(100% - ${LayoutSpace.TabMargin}px)`, }}>
+            <div className="flex gap-4 p-4" style={{ height: `calc(100% - ${LayoutSpace.TabMargin}px)`, }}>
                 <div
                     className={`transition-all duration-300 ${open ? "w-[268px]" : "w-16 border"
                         } approval-filter-container flex max-h-full flex-col rounded-lg bg-white`}
@@ -454,9 +454,9 @@ const StoreManagement: React.FC = () => {
                                 className="mt-2"
                             >
                                 <Col className="px-0 -mt-3" span={30}>
-                                <Checkbox.Group
+                                    <Checkbox.Group
                                         onChange={(checkedValues) => {
-                                            form.setFieldsValue({management_unit: checkedValues });
+                                            form.setFieldsValue({ management_unit: checkedValues });
                                             formValueChange();
                                         }}
                                         style={{ width: "100%" }}
@@ -536,7 +536,7 @@ const StoreManagement: React.FC = () => {
                                     // treeData={organizationTree}
                                     treeData={listToTree(arrayToTree([...organizations], { dataField: null }))}
                                     onChange={(checkedValues) => {
-                                        form.setFieldsValue({place_id: checkedValues });
+                                        form.setFieldsValue({ place_id: checkedValues });
                                         formValueChange();
                                     }}
                                 />
@@ -606,20 +606,72 @@ const StoreManagement: React.FC = () => {
                                 className="rounded-full"
                                 placeholder="Nhập tên trang thiết bị"
                                 allowClear
+                      
                                 onChange={(e: any) => {
                                     setPagination({ page: 1, pageSize: DEFAULT_PAGESIZE });
+                                
                                     if (e.target.value !== '') {
                                         setFilter((prev: any) => ({
                                             ...prev,
-                                            name: {
-                                                _contains: e.target.value,
-                                            },
+                                            _or: [
+                                                { name: { _icontains: e.target.value } },
+                                                { serial_number: { _icontains: e.target.value } },
+                                                { nick_name: { _icontains: e.target.value } },
+                                                { management_unit: { _icontains: e.target.value } },
+                                                { quantity: { _icontains: e.target.value } },
+                                                {
+                                                    condition_id: {
+                                                        name: { _icontains: e.target.value }
+                                                    }
+                                                },
+                                                {
+                                                    investor_id: {
+                                                        name: { _icontains: e.target.value }
+                                                    },
+                                                },
+                                                {
+                                                    manufacturer_id: {
+                                                        name: { _icontains: e.target.value }
+                                                    },
+                                                },
+                                                {
+                                                    unit_id: {
+                                                        name: { _icontains: e.target.value }
+                                                    },
+                                                },
+                                                {
+                                                    org_id: {
+                                                        name: { _icontains: e.target.value }
+                                                    },
+                                                },
+                                                {
+                                                    place_id: {
+                                                        name: { _icontains: e.target.value }
+                                                    },
+                                                },
+                                                {
+                                                    species_id: {
+                                                        name: { _icontains: e.target.value }
+                                                    },
+                                                },
+                                                {
+                                                    group_id: {
+                                                        name: { _icontains: e.target.value }
+                                                    },
+                                                },
+                                                {
+                                                    manager_id: {
+                                                        name: { _icontains: e.target.value }
+                                                    },
+                                                }
+                                            ],
                                         }));
                                     } else {
-                                        const { name, ...filterWithoutFullName } = filter;
-                                        setFilter(filterWithoutFullName)
+                                        const { _or, ...filterWithoutOr } = filter;
+                                        setFilter(filterWithoutOr);
                                     }
                                 }}
+                                
                                 suffix={<SearchOutlined className="text-primary" />}
                             />
                             <Button onClick={() => {
