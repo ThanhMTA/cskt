@@ -397,18 +397,18 @@ const In_OutManagement: React.FC = () => {
 
 
 
-        if (form.getFieldValue('search')?.length) {
-            filterValue = {
-                _and: [
-                    ...filterValue._and,
-                    {
-                        name: {
-                            _icontains: form.getFieldValue('search').trim(),
-                        }
-                    },
-                ],
-            };
-        }
+        // if (form.getFieldValue('search')?.length) {
+        //     filterValue = {
+        //         _and: [
+        //             ...filterValue._and,
+        //             {
+        //                 name: {
+        //                     _icontains: form.getFieldValue('search').trim(),
+        //                 }
+        //             },
+        //         ],
+        //     };
+        // }
         if (form.getFieldValue('time')?.length === 2) {
             const [startTime, endTime] = form.getFieldValue('time');
             filterValue = {
@@ -477,18 +477,18 @@ const In_OutManagement: React.FC = () => {
             };
         }
 
-        if (form.getFieldValue('search')?.length) {
-            filterValue = {
-                _and: [
-                    ...filterValue._and,
-                    {
-                        name: {
-                            _icontains: form.getFieldValue('search').trim(),
-                        }
-                    },
-                ],
-            };
-        }
+        // if (form.getFieldValue('search')?.length) {
+        //     filterValue = {
+        //         _and: [
+        //             ...filterValue._and,
+        //             {
+        //                 name: {
+        //                     _icontains: form.getFieldValue('search').trim(),
+        //                 }
+        //             },
+        //         ],
+        //     };
+        // }
         // setFilter(filterValue);
         setFilterHandover(filterValue)
     };
@@ -589,56 +589,76 @@ const In_OutManagement: React.FC = () => {
                                 className="rounded-full"
                                 placeholder="Nhập tên trang thiết bị"
                                 allowClear
+                                // onChange={(e: any) => {
+                                //     setPagination({ page: 1, pageSize: DEFAULT_PAGESIZE });
+                                //     if (e.target.value !== '') {
+                                //         setFilter((prev: any) => ({
+                                //             ...prev,
+                                //             name: {
+                                //                 _contains: e.target.value,
+                                //             },
+                                //         }));
+                                //         setFilterHandover((prev: any) => ({
+                                //             ...prev,
+                                //             name: {
+                                //                 _contains: e.target.value,
+                                //             },
+                                //         }));
+                                //     } else {
+                                //         const { name, ...filterWithoutFullName } = filter;
+                                //         setFilter(filterWithoutFullName);
+
+                                //         setFilterHandover(filterWithoutFullName)
+                                //     }
+                                // }}
                                 onChange={(e: any) => {
                                     setPagination({ page: 1, pageSize: DEFAULT_PAGESIZE });
                                 
                                     if (e.target.value !== '') {
-                                        setFilter((prev: any) => ({
-                                            ...prev,
+                                        const newFilter = {
+                                            ...filter,
                                             _or: [
                                                 { name: { _contains: e.target.value } },
                                                 { serial_number: { _contains: e.target.value } },
                                                 { nick_name: { _contains: e.target.value } },
                                                 { management_unit: { _contains: e.target.value } },
-                                                // { unit_id: { _contains: e.target.value } },
                                                 { quantity: { _contains: e.target.value } },
-                                                { condition_id: {
-                                                    name: { _contains: e.target.value }
-                                                }
-                                                   
-                                                 },
-                                                { investor_id:{
-                                                    name: { _contains: e.target.value } },
-                                                },
-                                                { manufacturer_id:{
-                                                    name:  { _contains: e.target.value } },
-                                                },   
-                                                { unit_id:{
-                                                    name:  { _contains: e.target.value } },
-                                                },   
-                                                { org_id:{
-                                                    name:  { _contains: e.target.value } },
-                                                },  
-                                                { place_id:{
-                                                    name:  { _contains: e.target.value } },
-                                                }, 
-                                                { species_id:{
-                                                    name:  { _contains: e.target.value } },
-                                                },  
-                                                { group_id:{
-                                                    name:  { _contains: e.target.value } },
-                                                },        
-                                                { manager_id:
-                                                    {
-                                                        name:{ _contains: e.target.value } },
-                                                    } 
+                                                { condition_id: { name: { _contains: e.target.value } } },
+                                                { investor_id: { name: { _contains: e.target.value } } },
+                                                { manufacturer_id: { name: { _contains: e.target.value } } },
+                                                { unit_id: { name: { _contains: e.target.value } } },
+                                                { org_id: { name: { _contains: e.target.value } } },
+                                                { place_id: { name: { _contains: e.target.value } } },
+                                                { species_id: { name: { _contains: e.target.value } } },
+                                                { group_id: { name: { _contains: e.target.value } } },
+                                                { manager_id: { name: { _contains: e.target.value } } },
                                             ],
-                                        }));
+                                        };
+                                
+                                        setFilter(newFilter);
+                                        setFilterHandover({
+                                            ...filterHandover,
+                                            _or: [
+                                                { name: { _contains: e.target.value } },
+                                                { title: { _contains: e.target.value } },
+                                                // { org_delivery_id: { _contains: e.target.value } },
+                                                { type_handover: { _contains: e.target.value } },
+                                                // { quantity: { _contains: e.target.value } },
+                                                { org_delivery_id: { name: { _contains: e.target.value } } },
+                                                { org_receive_id: { name: { _contains: e.target.value } } },
+                                                // { org_id: { name: { _contains: e.target.value } } },
+                                                // { place_id: { name: { _contains: e.target.value } } },
+                                            ],
+                                        });
                                     } else {
                                         const { _or, ...filterWithoutOr } = filter;
+                                        const { _or: _orHandover, ...filterHandoverWithoutOr } = filterHandover;
+                                        
                                         setFilter(filterWithoutOr);
+                                        setFilterHandover(filterHandoverWithoutOr);
                                     }
                                 }}
+                                
                                 suffix={<SearchOutlined className="text-primary" />}
                             />
                             <Button

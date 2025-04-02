@@ -29,7 +29,19 @@ export const getTTB =  async(query: IRequest, filter: any) => {
     if (!id) {
         return [];
     }
-   
+    const updatedFilter1 = { ...filter };
+
+    // Nếu filter chứa _and, loại bỏ các điều kiện không mong muốn
+    if (updatedFilter1._and) {
+        updatedFilter1._and = updatedFilter1._and.filter((condition: any) => {
+            return !condition.place_id ; // Loại bỏ name và org_id
+        });
+    }   
+    // Xóa luôn nếu `name` hoặc `org_id` tồn tại ở ngoài
+    delete updatedFilter1.place_id;
+    if (id) {
+        updatedFilter1.place_id = { _in: id };
+    }
     return getItems<TTBData[]>("trang_thiet_bi", {
         ...query,
         fields: [
@@ -51,7 +63,6 @@ export const getTTB =  async(query: IRequest, filter: any) => {
             {
                 investor_id: ["*"],// nguồn đầu tư
             },
-          
             {
                 manager_id: ["*"], // người quản lý
             },
@@ -65,9 +76,10 @@ export const getTTB =  async(query: IRequest, filter: any) => {
                 group_id: ["*"],
             }
         ],
-        filter: {
+        filter: { 
             place_id: { _in:id }
         },
+        // filter: updatedFilter1,
         sort: ["date_created"],
     });
 };
@@ -128,7 +140,6 @@ export const getTTBDetail = (id: any, filter: any) => {
         filter,
     });
 };
-
 export const createTTB = (params: TTBData) => {
     return create<TTBData>("trang_thiet_bi", {
         ...params,
@@ -169,11 +180,8 @@ export const getPlaceTree = async () => {
       return result;
     } catch (error: any) {
       console.error("❌ Lỗi khi lấy dữ liệu vị trí:", error);
-  
-      // Có thể throw lại lỗi rõ ràng hơn nếu cần
       throw new Error(
         error?.message?.message || "Đã xảy ra lỗi khi truy vấn vị trí (vi_tri)"
       );
     }
   };
-  

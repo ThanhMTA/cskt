@@ -87,46 +87,61 @@ export const getReceivedTTBList = async (query: IRequest, extraFilter: any) => {
     return getReceivedTTB(query, extraFilter, ttbIds); // Bước 3: Lấy danh sách thiết bị với bộ lọc
 };
 
-export const getHandoverList1 = async (query: IRequest, filter: any, type_handover:string) => {
+export const getHandoverList1 = async (query: IRequest, filter: any, type_handover: string) => {
 
-    const updatedFilter1 = { ...filter };
+    // const updatedFilter1 = { ...filter };
 
-    // Nếu filter chứa _and, loại bỏ các điều kiện không mong muốn
-    if (updatedFilter1._and) {
-        updatedFilter1._and = updatedFilter1._and.filter((condition: any) => {
-            return !condition.name && !condition.org_id; // Loại bỏ name và org_id
-        });
+    // // Nếu filter chứa _and, loại bỏ các điều kiện không mong muốn
+    // if (updatedFilter1._and) {
+    //     updatedFilter1._and = updatedFilter1._and.filter((condition: any) => {
+    //         return !condition.name && !condition.org_id; // Loại bỏ name và org_id
+    //     });
+    // }
+
+    // // Xóa luôn nếu `name` hoặc `org_id` tồn tại ở ngoài
+    // delete updatedFilter1.name;
+    // delete updatedFilter1.org_id;
+    // if (type_handover) {
+    //     updatedFilter1.type_handover = { _eq: type_handover };
+    // }
+    const updatedFilter1: any = {};
+
+    // Chỉ giữ lại các điều kiện liên quan đến time và type_handover
+    if (filter.time) {
+        updatedFilter1.time = filter.time;
     }
-    
-    // Xóa luôn nếu `name` hoặc `org_id` tồn tại ở ngoài
-    delete updatedFilter1.name;
-    delete updatedFilter1.org_id;
+    if (filter.type_handover) {
+        updatedFilter1.type_handover = filter.type_handover;
+    }
+
+    // Nếu có type_handover từ biến bên ngoài, thêm vào điều kiện lọc
     if (type_handover) {
         updatedFilter1.type_handover = { _eq: type_handover };
     }
+
     const handoverRecords = await getItems<handoverData[]>("handover_record", {
         fields: ["id"],
         // filter: Object.keys(updatedFilter1).length > 0 ? updatedFilter1 : undefined, // Chỉ truyền filter nếu còn điều kiện hợp lệ
         // filter
         filter: updatedFilter1,
     });
-    
+
     const updatedFilter = { ...filter };
 
     // Nếu filter chứa _and, loại bỏ time khỏi các điều kiện bên trong
     if (updatedFilter._and) {
         updatedFilter._and = updatedFilter._and.filter((condition: any) => !condition.time);
     }
-    
+
     // Xóa luôn nếu `time` tồn tại ở ngoài
     delete updatedFilter.time;
-    
+
     const TTBRecords = await getItems<TTBData[]>("trang_thiet_bi", {
         fields: ["id"],
-        filter:  updatedFilter
+        filter: updatedFilter
         // filter
     });
-    
+
     // const TTBRecords = await getItems<TTBData[]>("trang_thiet_bi", {
     //     fields: ["id"],
     //     // filter // Chỉ truyền filter nếu có
@@ -178,29 +193,31 @@ export const getHandoverList1 = async (query: IRequest, filter: any, type_handov
                         group_id: ["*"],
                     }
                 ],
-             
+
             },
-            { id_handover:
-               
-                 [
-                    "*",
-                    {
-                        // admin_unit_id: ["*"],
-                        org_delivery_id: ["*"],// đơn vị giao
-                    },
-                    {
-                        org_receive_id: ["*"],// đơn vị nhận
-                    },
-                    {
-        
-                        deliverer_id: ["*"],// người giao
-                    },
-                    {
-                        receiver_id: ["*"],// người nhận
-                    },
-        
-        
-                ],}
+            {
+                id_handover:
+
+                    [
+                        "*",
+                        {
+                            // admin_unit_id: ["*"],
+                            org_delivery_id: ["*"],// đơn vị giao
+                        },
+                        {
+                            org_receive_id: ["*"],// đơn vị nhận
+                        },
+                        {
+
+                            deliverer_id: ["*"],// người giao
+                        },
+                        {
+                            receiver_id: ["*"],// người nhận
+                        },
+
+
+                    ],
+            }
             //   { 
 
             //   }
@@ -213,24 +230,37 @@ export const getHandoverList1 = async (query: IRequest, filter: any, type_handov
     });
 };
 export const metaHandoverList = async (filter: any, type_handover: string): Promise<IMeta> => {
-    const updatedFilter1 = { ...filter };
+    // const updatedFilter1 = { ...filter };
 
-    // Loại bỏ điều kiện không mong muốn trong `_and`
-    if (updatedFilter1._and) {
-        updatedFilter1._and = updatedFilter1._and.filter((condition: any) => {
-            return !condition.name && !condition.org_id;
-        });
+    // // Loại bỏ điều kiện không mong muốn trong `_and`
+    // if (updatedFilter1._and) {
+    //     updatedFilter1._and = updatedFilter1._and.filter((condition: any) => {
+    //         return !condition.name && !condition.org_id;
+    //     });
+    // }
+
+    // // Xóa `name` và `org_id` nếu tồn tại
+    // delete updatedFilter1.name;
+    // delete updatedFilter1.org_id;
+
+    // // Thêm `type_handover` vào bộ lọc nếu có
+    // if (type_handover) {
+    //     updatedFilter1.type_handover = { _eq: type_handover };
+    // }
+    const updatedFilter1: any = {};
+
+    // Chỉ giữ lại các điều kiện liên quan đến time và type_handover
+    if (filter.time) {
+        updatedFilter1.time = filter.time;
+    }
+    if (filter.type_handover) {
+        updatedFilter1.type_handover = filter.type_handover;
     }
 
-    // Xóa `name` và `org_id` nếu tồn tại
-    delete updatedFilter1.name;
-    delete updatedFilter1.org_id;
-
-    // Thêm `type_handover` vào bộ lọc nếu có
+    // Nếu có type_handover từ biến bên ngoài, thêm vào điều kiện lọc
     if (type_handover) {
         updatedFilter1.type_handover = { _eq: type_handover };
     }
-
     // 🔹 Lọc danh sách `handover_record`
     const handoverRecords = await getItems<handoverData[]>("handover_record", {
         fields: ["id"],
@@ -273,7 +303,7 @@ export const metaHandoverList = async (filter: any, type_handover: string): Prom
 
     return { count: data[0]?.countDistinct?.id ?? 0 };
 };
-export const getHandoverDetail = async (id_handover:any) => {
+export const getHandoverDetail = async (id_handover: any) => {
     return getItems<handoverListData[]>("handover_list", {
         fields: ["*",
             {
@@ -312,104 +342,106 @@ export const getHandoverDetail = async (id_handover:any) => {
                         group_id: ["*"],
                     }
                 ],
-             
+
             },
-            { id_handover:
-               
-                 [
-                    "*",
-                    {
-                        // admin_unit_id: ["*"],
-                        org_delivery_id: ["*"],// đơn vị giao
-                    },
-                    {
-                        org_receive_id: ["*"],// đơn vị nhận
-                    },
-                    {
-        
-                        deliverer_id: [
-                            "*",
-                            {
-                                // admin_unit_id: ["*"],
-                                capbac_id: ["*"],
-                
-                            },
-                            {
-                                chucvu_id: ["*"],
-                            },
-                            {
-                
-                                donvi_id: ["*"],
-                            },
-                            {
-                
-                                ward_id: [
-                                    "*",
-                                    {
-                                        district_id: [
-                                            "*",
-                                            {
-                                                province_id: ["*"],
-                                            },
-                                        ],
-                                    },
-                                ],
-                            }
-                        ],// người giao
-                    },
-                    {
-                        receiver_id: [
-                            "*",
-                            {
-                                // admin_unit_id: ["*"],
-                                capbac_id: ["*"],
-                
-                            },
-                            {
-                                chucvu_id: ["*"],
-                            },
-                            {
-                
-                                donvi_id: ["*"],
-                            },
-                            {
-                
-                                ward_id: [
-                                    "*",
-                                    {
-                                        district_id: [
-                                            "*",
-                                            {
-                                                province_id: ["*"],
-                                            },
-                                        ],
-                                    },
-                                ],
-                            }
-                        ],// người nhận
-                    },
-        
-        
-                ],}
+            {
+                id_handover:
+
+                    [
+                        "*",
+                        {
+                            // admin_unit_id: ["*"],
+                            org_delivery_id: ["*"],// đơn vị giao
+                        },
+                        {
+                            org_receive_id: ["*"],// đơn vị nhận
+                        },
+                        {
+
+                            deliverer_id: [
+                                "*",
+                                {
+                                    // admin_unit_id: ["*"],
+                                    capbac_id: ["*"],
+
+                                },
+                                {
+                                    chucvu_id: ["*"],
+                                },
+                                {
+
+                                    donvi_id: ["*"],
+                                },
+                                {
+
+                                    ward_id: [
+                                        "*",
+                                        {
+                                            district_id: [
+                                                "*",
+                                                {
+                                                    province_id: ["*"],
+                                                },
+                                            ],
+                                        },
+                                    ],
+                                }
+                            ],// người giao
+                        },
+                        {
+                            receiver_id: [
+                                "*",
+                                {
+                                    // admin_unit_id: ["*"],
+                                    capbac_id: ["*"],
+
+                                },
+                                {
+                                    chucvu_id: ["*"],
+                                },
+                                {
+
+                                    donvi_id: ["*"],
+                                },
+                                {
+
+                                    ward_id: [
+                                        "*",
+                                        {
+                                            district_id: [
+                                                "*",
+                                                {
+                                                    province_id: ["*"],
+                                                },
+                                            ],
+                                        },
+                                    ],
+                                }
+                            ],// người nhận
+                        },
+
+
+                    ],
+            }
             //   { 
 
             //   }
         ],
         filter: {
             id_handover: { _eq: id_handover }
-           
+
         },
         sort: ["date_created"],
     });
 };
-export const metaHandoverDetail = async (id_handover:any): Promise<IMeta> => {
+export const metaHandoverDetail = async (id_handover: any): Promise<IMeta> => {
     // 🔹 Tính số lượng trong `handover_list`
     const data = await aggregateData<IMetaDistinct[]>("handover_list", {
         aggregate: { countDistinct: "id_tb" },
         query: {
             filter: {
                 id_handover: { _eq: id_handover },
-               
+
             },
         },
     });

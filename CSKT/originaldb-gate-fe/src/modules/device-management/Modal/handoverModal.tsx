@@ -198,9 +198,6 @@ const Handover_View: React.FC<FailureCreateType> = ({
       const res = await getHandoverDetail(detail?.id);
       setDatasource(res);
       // setHandoverDetail(datasource[0])
-
-
-
     } catch (e) {
       console.log(e)
       // setIsIoading(false)
