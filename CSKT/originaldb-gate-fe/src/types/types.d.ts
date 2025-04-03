@@ -633,7 +633,6 @@ export type Organizations = {
   tree_path?: string | null;
   ward_id?: string | WardCategories | null;
 };
-
 export type OrganizationsOrgTypeCategories = {
   id: number;
   org_type_categories_id?: string | OrgTypeCategories | null;

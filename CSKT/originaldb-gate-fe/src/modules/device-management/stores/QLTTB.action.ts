@@ -99,6 +99,10 @@ export const getTTBDetail = (id: any, filter: any) => {
             {
                 group_id: ["*"],
             }
+            ,
+            {
+                store_id: ["*"],
+            }
         ],
         filter,
     });

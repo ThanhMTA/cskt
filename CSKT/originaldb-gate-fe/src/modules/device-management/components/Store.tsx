@@ -9,7 +9,7 @@ import { Badge, Button, Form, Input, Tag, Tooltip, TreeSelect, Col, Checkbox, Se
 import { arrayToTree } from "performant-array-to-tree";
 import { listToTree } from "@app/core/helper";
 import { getUsersList, metaUsers, getOrganizationTree } from "../stores/Account.action";
-import { getTTB, metaTTB, getCommonCategory, getPlaceTree } from "../stores/Store.action";
+import { getTTB, metaTTB, getCommonCategory, getPlaceTree, getStoreTree, findRootStore } from "../stores/Store.action";
 import { TableGeneralKeys } from "@app/enums/table.enum";
 import { DEFAULT_PAGESIZE } from "@app/configs/app.config";
 import dayjs from "dayjs";
@@ -20,8 +20,9 @@ import { useModal } from "@app/contexts/ModalContext";
 // import TTBAction from "./QLTTBModal";
 import { ic_geo } from "@app/assets/svg";
 import { group } from "console";
-import TTBAction from "../Modal/QLTTBModal";
+import StoreAction from "../Modal/storeModal";
 import { TTBData } from "../types/TTB.type";
+import { Store } from "antd/es/form/interface";
 
 export const ACTION_TABLE: ITableAction[] = [];
 const COLOR_RANGE: any = {
@@ -47,7 +48,7 @@ const StoreManagement: React.FC = () => {
     const [open, setOpen] = useState(true);
     const { userInfo } = userStore()
     const [organizations, setOrganizations] = useState<any>([]);
-    const [places, setPlaces] = useState<any>([]);
+    const [store, setStore] = useState<any>([]);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [datasource, setDatasource] = useState<PersonalIdentify[]>([])
     const [pagination, setPagination] = useState<{ page: number, pageSize: number }>({ page: 1, pageSize: DEFAULT_PAGESIZE });
@@ -60,6 +61,26 @@ const StoreManagement: React.FC = () => {
         group: [],
         // position: [],
     });
+    const processData = async (data: any[]) => {
+        return Promise.all(
+          data.map(async (item) => {
+            if (!item.store_id) return { ...item, rootStoreName: "" };
+      
+            const rootStore = await findRootStore(item.store_id.id);
+            console.log("ktr:",rootStore)
+            return { ...item, rootStoreName: rootStore };
+          })
+        );
+      };
+      
+      // Gọi dữ liệu và cập nhật state
+    //   useEffect(() => {
+    //     getStoreTree().then(async (datasource) => {
+    //       const processedData = await processData(datasource);
+    //       setDatasource(processedData);  // setTableData là state chứa dữ liệu bảng
+    //       console.log(datasource)
+    //     });
+    //   }, []);
     const columns: any[] = useMemo(() => {
         return [
             {
@@ -87,7 +108,6 @@ const StoreManagement: React.FC = () => {
                     return value
                 },
                 //     width:150
-
             },
             {
                 title: "serial number",
@@ -155,7 +175,6 @@ const StoreManagement: React.FC = () => {
                     return value
                 },
             },
-
             {
                 title: "Người quản lý",
                 dataIndex: "manager_id",
@@ -163,34 +182,47 @@ const StoreManagement: React.FC = () => {
                 render: (value: any, record: any) => record?.manager_id?.name ?? '',
             },
             {
-                title: "Vị trí hiện tại",
-                dataIndex: "place_id",
-                key: "place_id",
-                render: (value: any, record: any) => record?.place_id?.name ?? '',
-            },
-            {
+                title: "Vị trí",
+                dataIndex: "store_id",
+                key: "store_id",
+                render: (value: any, record: any) => record?.store_id?.name?? '',  
+                // render: (value: any, record: any) => record?.rootStoreName?? '',
 
+                // render: (value: any) => {
+                //     return value
+                // },
+                // render: async (value: any, record: any) => {
+                //     // if (!record.store_id) return "";
+                    
+                //     const rootStore = await findRootStore(record.store_id.id);
+                //   console.log("kt:",rootStore)
+                //     return rootStore
+                //   },
+            },
+           
+            
+            {
                 title: "Trạng thái",
                 dataIndex: "is_enable",
                 key: "is_enable",
                 render: (flag: boolean) => flag ? <span className="text-green-600">Hoạt động</span> : <span className="text-red">Không hoạt động</span>
-
             },
         ];
     }, []);
-
+  
+      
     const handleActions = (key: Action, item: TTBData) => {
         switch (key) {
             case Action.View:
                 openModal(
-                    <TTBAction id={item.id} action={Action.View} />,
+                    <StoreAction id={item.id} action={Action.View} />,
                     {
                         width: '50vw',
                         onModalClose(res) {
                             if (res?.success) {
                                 if (res?.success) {
                                     openModal(
-                                        <TTBAction id={item.id} action={Action.Update} />,
+                                        <StoreAction id={item.id} action={Action.Update} />,
                                         {
                                             width: '50vw',
                                             onModalClose() {
@@ -208,7 +240,7 @@ const StoreManagement: React.FC = () => {
                 break;
             case Action.Create:
                 openModal(
-                    <TTBAction action={Action.Create} />,
+                    <StoreAction action={Action.Create} />,
                     {
                         width: '50vw',
                         onModalClose(res) {
@@ -240,16 +272,19 @@ const StoreManagement: React.FC = () => {
 
             const response: any = await Promise.all([
                 getOrganizationTree(),
+         
                 // metaUsers({ ...init_filter }),
                 // getUsersList({ limit: pageSize, page }, { ...init_filter }),
                 getCommonCategory('species_categories'),
                 getCommonCategory('nhom_TBKT'),
+                getStoreTree(),
                 // getCommonCategory('vi_tri'),
                 // getPlaceTree()
             ]);
             const res = await Promise.all([getTTB({ limit: pageSize, page }, filter), metaTTB(filter)]);
 
             setOrganizations(response[0]);
+            setStore(response[3]);
             setMeta(res[1]);
             setDatasource(res[0])
             setCommonCategories({
@@ -273,7 +308,18 @@ const StoreManagement: React.FC = () => {
         }
         return ''
     }
+    const renderStoreName = (id: string | null) => {
+        if (id) {
+            return ` - ${store?.find((item:Store) => item?.id === id)?.name}`
+        }
+        return ''
+    }
     useEffect(() => {
+        getStoreTree().then(async (datasource) => {
+            const processedData = await processData(datasource);
+            setDatasource(processedData);  // setTableData là state chứa dữ liệu bảng
+            console.log(datasource)
+          });
         fetchData(pagination.page, pagination.pageSize, filter)
     }, [pagination, filter])
 
@@ -346,13 +392,13 @@ const StoreManagement: React.FC = () => {
                 ],
             };
         }
-        if (form.getFieldValue('place_id')?.length) {
+        if (form.getFieldValue('store_id')?.length) {
             filterValue = {
                 _and: [
                     ...filterValue._and,
                     {
-                        place_id: {
-                            _in: form.getFieldValue('place_id'),
+                        store_id: {
+                            _in: form.getFieldValue('store_id'),
                         }
                     },
                 ],
@@ -534,9 +580,9 @@ const StoreManagement: React.FC = () => {
                                     allowClear
                                     treeDefaultExpandAll
                                     // treeData={organizationTree}
-                                    treeData={listToTree(arrayToTree([...organizations], { dataField: null }))}
+                                    treeData={listToTree(arrayToTree([...store], { dataField: null }))}
                                     onChange={(checkedValues) => {
-                                        form.setFieldsValue({ place_id: checkedValues });
+                                        form.setFieldsValue({ store_id: checkedValues });
                                         formValueChange();
                                     }}
                                 />
@@ -663,6 +709,11 @@ const StoreManagement: React.FC = () => {
                                                     manager_id: {
                                                         name: { _icontains: e.target.value }
                                                     },
+                                                },
+                                                {
+                                                    store_id: {
+                                                        name: { _icontains: e.target.value }
+                                                    },
                                                 }
                                             ],
                                         }));
@@ -676,7 +727,7 @@ const StoreManagement: React.FC = () => {
                             />
                             <Button onClick={() => {
                                 openModal(
-                                    <TTBAction action={Action.Create} />,
+                                    <StoreAction action={Action.Create} />,
                                     {
                                         width: '50vw',
                                         onModalClose(res) {

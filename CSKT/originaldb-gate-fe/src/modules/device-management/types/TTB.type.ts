@@ -18,6 +18,7 @@ export type TTBData = {
     manufacturer_id:string;// hãng sản xuất 
     place_id:string;// vị trí hiện tại của trang thiết bị
     is_enable: boolean;
+    store_id:string;
     group_id:string;
     created_at?:string;
     updated_at?:string;

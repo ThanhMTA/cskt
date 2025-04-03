@@ -49,7 +49,7 @@ export default function TestManagement() {
             icon: <HistoryOutlined/>,
         },
         {
-            key: SystemType.Account,
+            key: SystemType.Store,
             label: "Quản lý kho",
             children: <div className="bg-[#F5F5F6] h-svh">
                 <StoreManagement />

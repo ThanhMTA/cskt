@@ -15,74 +15,7 @@ import {
 // import { CanBoCategoriesData } from "../types/CanBoCategories.types";
 import { TTBData } from "../types/TTB.type";
 import { VitriData } from "@app/modules/force-categories/types/vitris.types";
-
-
-// export const getTTB =  async(query: IRequest, filter: any) => {
-//     const result = await getItems<any[]>("organizations", {
-//         fields: ["id"],
-//         filter: { name: { _eq: "a11" }, ...filter },
-//     });
-//     // Lấy ID từ kết quả trả về
-//     const id = result[0] || null;
-// // console.log("ktra:", id)
-//     // Kiểm tra nếu không tìm thấy ID
-//     if (!id) {
-//         return [];
-//     }
-//     const updatedFilter1 = { ...filter };
-
-//     // Nếu filter chứa _and, loại bỏ các điều kiện không mong muốn
-//     if (updatedFilter1._and) {
-//         updatedFilter1._and = updatedFilter1._and.filter((condition: any) => {
-//             return !condition.place_id ; // Loại bỏ name và org_id
-//         });
-//     }   
-//     // Xóa luôn nếu `name` hoặc `org_id` tồn tại ở ngoài
-//     delete updatedFilter1.place_id;
-//     if (id) {
-//         updatedFilter1.place_id = { _eq: id };
-//     }
-//     return getItems<TTBData[]>("trang_thiet_bi", {
-//         ...query,
-//         fields: [
-//             "*",
-//             {
-//                 // admin_unit_id: ["*"],
-//                 condition_id: ["*"],// tình trạng
-//             },
-//             {
-//                 org_id: ["*"],// đơn vị biên chế
-//             },
-//             {
-
-//                 species_id: ["*"],// chủng loại
-//             },
-//             {
-//                 unit_id: ["*"],// đơn vị tính
-//             },
-//             {
-//                 investor_id: ["*"],// nguồn đầu tư
-//             },
-//             {
-//                 manager_id: ["*"], // người quản lý
-//             },
-//             {
-//                 manufacturer_id: ["*"], // hãng sản xuất
-//             },
-//             {
-//                 place_id: ["*"],// vị trí hiện tại
-//             },
-//             {
-//                 group_id: ["*"],
-//             }
-//         ],
-//         // filter: { 
-//         //     place_id: { _in:id }
-//         // },
-//         filter: updatedFilter1,
-//         sort: ["date_created"],
-//     });
-// };
+import { StoreData } from "../types/store.type";
 export const getTTB = async (query: IRequest, filter: any) => {
     // Lấy dữ liệu từ "organizations" để lấy ID của 'place_id'
     const result = await getItems<any[]>("organizations", {
@@ -121,28 +54,23 @@ export const getTTB = async (query: IRequest, filter: any) => {
             { manufacturer_id: ["*"] },
             { place_id: ["*"] },
             { group_id: ["*"] },
+            {
+                store_id: ["*"],
+            },
         ],
         filter: updatedFilter1, // Sử dụng filter đã được cập nhật
         sort: ["date_created"],
     });
 };
-
 export const metaTTB = async (filter: any): Promise<IMeta> => {
     const result = await getItems<any[]>("organizations", {
         fields: ["id"],
         filter: { name: { _eq: "a11" } },
     });
     const id = result?.[0]?.id || null;
-
-    // Kiểm tra nếu không tìm thấy ID
- 
-
-    // Sao chép filter để sử dụng và điều chỉnh
     const updatedFilter1 = { ...filter };
-
     // Xóa place_id trong updatedFilter1 nếu có
     delete updatedFilter1.place_id;
-
     // Nếu có id, thêm vào updatedFilter1
     updatedFilter1.place_id = { _eq: id };
    
@@ -177,7 +105,7 @@ export const getTTBDetail = (id: any, filter: any) => {
             },
             {
                 manager_id: ["*"], // người quản lý
-            },
+            }, 
             {
                 manufacturer_id: ["*"], // hãng sản xuất
             },
@@ -186,7 +114,13 @@ export const getTTBDetail = (id: any, filter: any) => {
             },
             {
                 group_id: ["*"],
-            }
+            }, 
+            {
+                store_id: [
+                    "*",
+                    {parent_id:["*"]}
+                ],
+            },
         ],
         filter,
     });
@@ -236,3 +170,37 @@ export const getPlaceTree = async () => {
       );
     }
   };
+  export const getStoreTree = () => {
+    return getItems<StoreData[]>("store", {
+      alias: {
+        parentId: "parent_id",
+        value: "id",
+        key: "id",
+        title: "name",
+      },
+      fields: [
+        "id",
+        "key",
+        "name",
+        "value",
+        "title",
+        "parentId",
+        "parent_id",
+        "order_number",
+      ],
+      limit: -1,
+      sort: ["order_number"],
+    });
+  };
+  export const findRootStore = async (storeId: string) => {
+    const stores = await getStoreTree(); // Lấy toàn bộ cây store
+    const storeMap = new Map(stores.map(store => [store.id, store])); // Tạo Map để tra cứu nhanh
+  
+    let currentStore = storeMap.get(storeId);
+    while (currentStore && currentStore.parent_id) {
+      currentStore = storeMap.get(currentStore?.parent_id);
+    }
+  
+    return currentStore?.name; // Trả về store cao nhất
+  };
+  

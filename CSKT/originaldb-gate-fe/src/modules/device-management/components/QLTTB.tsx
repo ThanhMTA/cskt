@@ -163,7 +163,7 @@ const TTBManagement: React.FC = () => {
                 render: (value: any, record: any) => record?.manager_id?.name ?? '',
             },
             {
-                title: "Vị trí hiện tại",
+                title: "Đơn vị hiện tại",
                 dataIndex: "place_id",
                 key: "place_id",
                 render: (value: any, record: any) => record?.place_id?.name ?? '',
@@ -514,7 +514,7 @@ const TTBManagement: React.FC = () => {
                                 label={
                                     <div className="flex flex-row gap-2">
                                         <img src={ic_geo} />
-                                        <span className="text-[14px] font-bold leading-[24px]">Vị ví</span>
+                                        <span className="text-[14px] font-bold leading-[24px]">Đơn vị hiện tại</span>
                                     </div>
                                 }>
                                 <TreeSelect
